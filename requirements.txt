@@ -1,0 +1,19 @@
+# API modules
+fastapi
+httpx
+uvicorn
+gunicorn
+
+# Database modules
+sqlalchemy
+sqlalchemy_utils
+asyncpg
+psycopg2-binary
+sqlmodel
+aiosqlite
+greenlet
+
+# Logs and lint
+loguru
+asgi_correlation_id
+isort
