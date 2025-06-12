@@ -8,9 +8,10 @@
 - [2. Custom exceptions](#2-custom-exceptions)
   - [Pros from this approach](#pros-from-this-approach)
 - [3. Unified and Powerful Logging with **Loguru**](#3-unified-and-powerful-logging-with-loguru)
-- [4. Centralized Exception Handling with FastAPI](#4-centralized-exception-handling-with-fastapi)
-- [5. Clean Database Error Handling with Custom DbManager](#5-clean-database-error-handling-with-custom-dbmanager)
-- [6. Built for Observability: Prometheus, Loki, Grafana Ready](#6-built-for-observability-prometheus-loki-grafana-ready)
+- [4. FastAPI Middleware Enhancements](#4-fastapi-middleware-enhancements)
+- [5. Centralized Exception Handling with FastAPI](#5-centralized-exception-handling-with-fastapi)
+- [6. Clean Database Error Handling with Custom DbManager](#6-clean-database-error-handling-with-custom-dbmanager)
+- [7. Built for Observability: Prometheus, Loki, Grafana Ready](#7-built-for-observability-prometheus-loki-grafana-ready)
 
 
 ## 1. ASGI Traceability with asgi-correlation-id
@@ -202,7 +203,37 @@ By standardizing on Loguru:
 - Gain powerful features without extra dependencies or boilerplate,
 - Improve the quality, consistency, and actionability of logs across the project.
 
-## 4. Centralized Exception Handling with FastAPI
+## 4. FastAPI Middleware Enhancements
+- Add middleware for logging each request (method, path, status, duration).   
+- Design middleware to be extendable for future Prometheus metrics (e.g., request count/duration).  
+- Support scoped middleware: apply only to specific routers or endpoints using decorator-based or conditional logic.
+
+```python
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    logger.info(f"{request.client.host}:{request.client.port} {request.method} {request.url.path}")
+    response = await call_next(request)
+    duration = time.time() - start
+    logger.info(f"{request.method} {request.url.path} → {response.status_code} [{duration:.2f}s]")
+    return response
+```
+Optional: Use a custom dependency or router factory to scope middleware.
+```python
+def request_logger_dependency(request: Request):
+    start = time.time()
+    yield
+    duration = time.time() - start
+    logger.info(f"[SCOPED] {request.method} {request.url.path} [{duration:.2f}s]")
+
+router = APIRouter(dependencies=[Depends(request_logger_dependency)])
+
+@router.get("/scoped")
+async def scoped_endpoint():
+    return {"message": "This has scoped logging"}
+```
+
+## 5. Centralized Exception Handling with FastAPI
 
 ### 🧠 The Problem:
 In complex systems, exceptions can:
@@ -288,7 +319,7 @@ we achieve:
 
 This is a foundational step toward production-grade reliability and maintainability.
 
-## 5. Clean Database Error Handling with Custom DbManager
+## 6. Clean Database Error Handling with Custom DbManager
 
 ### 💡 Why This Matters
 With our exception system and FastAPI handlers in place, we can now build powerful tools **on top** - like a custom `DbManager` that:
@@ -397,7 +428,7 @@ Our custom `DbManager` wouldn't be possible without:
 The result is a production-ready DB layer that's **clean for devs**, **safe for users**, and **easy to operate**.
 
 
-## 6. Built for Observability: Prometheus, Loki, Grafana Ready
+## 7. Built for Observability: Prometheus, Loki, Grafana Ready
 
 ### 🔭 Why Observability Matters
 As we grow, it's crucial to:
