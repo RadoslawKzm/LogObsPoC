@@ -8,7 +8,7 @@ from . import log_config
 def log_it(log_level="DEBUG"):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        async def wrapper(*args, **kwargs):
             logger.opt(lazy=True).log(
                 log_level,
                 f"Calling function '{func.__name__}' "
