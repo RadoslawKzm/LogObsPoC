@@ -1,6 +1,6 @@
 import fastapi
 
-from exc.base_exception import BaseCustomException
+from proj_exc.base import BaseCustomException
 
 
 class ApiException(BaseCustomException):

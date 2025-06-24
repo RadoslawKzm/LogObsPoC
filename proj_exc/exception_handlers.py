@@ -3,7 +3,7 @@ from fastapi.requests import Request
 from loguru import logger
 
 from . import api_exceptions, db_exceptions
-from .base_exception import BaseCustomException
+from proj_exc.base import BaseCustomException
 
 
 def add_exception_handlers(app: fastapi.FastAPI) -> fastapi.FastAPI:
@@ -55,7 +55,7 @@ def add_exception_handlers(app: fastapi.FastAPI) -> fastapi.FastAPI:
         request: Request,
         exc: Exception,
     ) -> fastapi.responses.JSONResponse:
-        logger.opt(lazy=True, exception=exc).error(f"Unhandled Exception.")
+        logger.opt(lazy=True, exception=exc).error("Unhandled Exception.")
         return fastapi.responses.JSONResponse(
             status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={"message": "Team got notified and working on solution."},
