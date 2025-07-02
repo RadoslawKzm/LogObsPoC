@@ -43,6 +43,7 @@ default_section = "THIRDPARTY"
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
+    "**/__init__.py",
     ".bzr",
     ".direnv",
     ".eggs",
@@ -59,7 +60,6 @@ exclude = [
     ".ruff_cache",
     ".svn",
     ".tox",
-    ".venv",
     ".vscode",
     "__pypackages__",
     "_build",

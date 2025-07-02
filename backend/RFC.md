@@ -10,7 +10,7 @@
 - [3. Unified and Powerful Logging with **Loguru**](#3-unified-and-powerful-logging-with-loguru)
 - [4. FastAPI Middleware Enhancements](#4-fastapi-middleware-enhancements)
 - [5. Centralized Exception Handling with FastAPI](#5-centralized-exception-handling-with-fastapi)
-- [6. Clean Database Error Handling with Custom DbManager](#6-clean-database-error-handling-with-custom-dbmanager)
+- [6. Clean Database Error Handling with Custom PostgresSessionManager](#6-clean-database-error-handling-with-custom-dbmanager)
 - [7. Built for Observability: Prometheus, Loki, Grafana Ready](#7-built-for-observability-prometheus-loki-grafana-ready)
 
 
@@ -319,20 +319,20 @@ we achieve:
 
 This is a foundational step toward production-grade reliability and maintainability.
 
-## 6. Clean Database Error Handling with Custom DbManager
+## 6. Clean Database Error Handling with Custom PostgresSessionManager
 
 ### 💡 Why This Matters
-With our exception system and FastAPI handlers in place, we can now build powerful tools **on top** - like a custom `DbManager` that:
+With our exception system and FastAPI handlers in place, we can now build powerful tools **on top** - like a custom `PostgresSessionManager` that:
 - Automatically handles transactions,
 - Converts low-level SQLAlchemy errors into rich, structured exceptions,
 - Keeps business logic clean, async-safe, and exception-resilient.
 
 ---
 
-### ✅ What `DbManager` Does
+### ✅ What `PostgresSessionManager` Does
 
 ```python
-async with DbManager(database=DB) as session:
+async with PostgresSessionManager(database=DB) as session:
 session.add(user)
 ```
 or as Depends in FastAPI:
@@ -340,7 +340,7 @@ or as Depends in FastAPI:
 @router.post("/users/")
 async def create_user(
     user_data: UserCreate,
-    session=Depends(DbManager.get_session),
+    session=Depends(PostgresSessionManager.get_session),
 ):
     session.add(user_data)
 ```
@@ -355,7 +355,7 @@ This one line gives you:
 
 ### 🔄 How It Works with Exception Handlers
 
-Our `DbManager` converts raw SQLAlchemy exceptions into **custom exceptions**, like:
+Our `PostgresSessionManager` converts raw SQLAlchemy exceptions into **custom exceptions**, like:
 
 ```python
 raise db_exceptions.RecordNotFound()
@@ -385,7 +385,7 @@ async def db_exception_handler(
 ### ✨ Benefits
 
 - **Business logic stays clean** - no `try/except`, no commit/rollback clutter.
-- **Developers work with one abstraction** - `DbManager` just works.
+- **Developers work with one abstraction** - `PostgresSessionManager` just works.
 - **No lost errors** - all DB issues are logged, traced, and surfaced through handlers.
 - **Zero repetition** - exception mapping logic is centralized and consistent.
 - **Safe suppression** is supported with `suppress_exc=True` for batch-like operations.
@@ -398,7 +398,7 @@ async def db_exception_handler(
 @router.post("/users/")
 async def create_user(
     user_data: UserCreate,
-    session=Depends(DbManager.get_session),
+    session=Depends(PostgresSessionManager.get_session),
 ):
     user = User(**user_data.dict())
     session.add(user)
@@ -420,7 +420,7 @@ This pattern opens the door for:
 ---
 
 ### 🧬 In Summary
-Our custom `DbManager` wouldn't be possible without:
+Our custom `PostgresSessionManager` wouldn't be possible without:
 1. **Structured exception classes** to map errors,
 2. **FastAPI handlers** to catch them cleanly,
 3. **Loguru** for precise and lazy logging.
@@ -436,7 +436,7 @@ As we grow, it's crucial to:
 - **Visualize failures**
 - **Analyze system health over time**
 
-Our current foundation (Loguru + structured exceptions + `DbManager`) is already setting us up for **deep integration** with:
+Our current foundation (Loguru + structured exceptions + `PostgresSessionManager`) is already setting us up for **deep integration** with:
 - **Prometheus** for time-series metrics
 - **Grafana** for dashboarding
 - **Loki** for powerful structured log search
@@ -445,14 +445,14 @@ Our current foundation (Loguru + structured exceptions + `DbManager`) is already
 
 ### 📈 Prometheus Timing Integration
 
-Thanks to `DbManager` and centralized exception handlers, we can easily wrap operations with timing:
+Thanks to `PostgresSessionManager` and centralized exception handlers, we can easily wrap operations with timing:
 
 ```python
 import time
 
 start = time.monotonic()
 try:
-async with DbManager(database=DB) as session:
+async with PostgresSessionManager(database=DB) as session:
 ...
 finally:
 duration = time.monotonic() - start

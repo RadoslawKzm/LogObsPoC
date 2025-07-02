@@ -39,3 +39,14 @@ def log_it(log_level="DEBUG"):
         return wrapper
 
     return decorator
+
+
+# def log_event_decorator(event_type):
+#     def decorator(func):
+#         @wraps(func)
+#         async def wrapper(*args, **kwargs):
+#             response = await func(*args, **kwargs)
+#             log_event(current_user.id, event_type, {"details": ...})
+#             return response
+#         return wrapper
+#     return decorator
