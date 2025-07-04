@@ -23,6 +23,7 @@ class Database(pydantic.BaseModel):
                 f"{self.sync_driver}://{self.user}:{self.password}@"
                 f"{self.hostname}:{self.port}/{self.db_name}"
             )
+
     @pydantic.computed_field
     @property
     def async_conn_string(self) -> str:
@@ -34,6 +35,7 @@ class Database(pydantic.BaseModel):
                 f"{self.async_driver}://{self.user}:{self.password}@"
                 f"{self.hostname}:{self.port}/{self.db_name}"
             )
+
 
 databases: dict[str, Database] = {
     "sqlite": Database(
@@ -57,6 +59,6 @@ databases: dict[str, Database] = {
         port=os.getenv("MONGO_PORT") or 27017,
         db_name=os.getenv("MONGO_DB") or "LogsPoC",
         sync_driver="mongodb",  # no real use for sync in MongoDB client
-        async_driver="mongodb+motor"  # or just "mongodb" if using `motor`
+        async_driver="mongodb+motor",  # or just "mongodb" if using `motor`
     ),
 }

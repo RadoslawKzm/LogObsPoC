@@ -4,18 +4,18 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
-    create_async_engine,
     async_sessionmaker,
+    create_async_engine,
 )
-
 from sqlalchemy.orm import declarative_base
 from sqlalchemy_utils import create_database, database_exists
 from sqlmodel import SQLModel
-from loguru import logger
 
-from backend.database.config import databases, Database
+from backend.database.config import Database, databases
+from backend.database.postgres.session_measurement import (
+    InstrumentedAsyncSession,
+)
 from backend.proj_exc import db_exceptions
-from backend.database.postgres.session_measurement import InstrumentedAsyncSession
 
 Base = declarative_base()
 

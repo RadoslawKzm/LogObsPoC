@@ -1,4 +1,5 @@
 import typing
+
 from loguru import logger
 from backend.database.interface import DatabaseInterface
 from backend.database.postgres.session_manager import PostgresSessionManager
@@ -28,7 +29,8 @@ class PostgresImplementation(DatabaseInterface):
         """
         logger.debug("Getting many records to Postgres")
         result = await self.session.execute(
-            text("SELECT id, username, email FROM users"))
+            text("SELECT id, username, email FROM users")
+        )
         rows = result.all()
         # rows is list of sqlalchemy.engine.Row objects, convert to dicts:
         return rows

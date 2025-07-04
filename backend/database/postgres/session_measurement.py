@@ -1,6 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 import time
+
 from loguru import logger
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 class InstrumentedAsyncSession(AsyncSession):
     async def execute(self, *args, **kwargs):

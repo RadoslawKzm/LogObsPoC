@@ -1,4 +1,5 @@
 import typing
+
 from loguru import logger
 from backend.database.interface import DatabaseInterface
 from backend.database.mongo.session_manager import MongoSessionManager
