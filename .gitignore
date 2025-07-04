@@ -1,2 +1,5 @@
 /deployment/.env
 /backend/logs
+/deployment/mongo_data/
+/deployment/postgres_data/
+/.idea/
