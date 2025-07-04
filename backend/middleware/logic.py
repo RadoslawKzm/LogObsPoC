@@ -12,7 +12,7 @@ def add_http_middleware(*, app: fastapi.FastAPI):
             http_version=request.scope.get("http_version"),
             method=request.method,
             path=request.url.path,
-        ).info("HTTP request received")
+        ).info(f"HTTP Inbound {request.method} {request.url.path}")
         start = time.perf_counter()
         response = await call_next(request)
         duration = time.perf_counter() - start
@@ -21,5 +21,8 @@ def add_http_middleware(*, app: fastapi.FastAPI):
             path=request.url.path,
             response_code=response.status_code,
             duration=duration,
-        ).info("HTTP request end of road".rstrip())
+        ).info(
+            f"HTTP Outbound {request.method} {request.url.path} | "
+            f"{response.status_code} {duration:.3f}s"
+        )
         return response
