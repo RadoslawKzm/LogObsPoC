@@ -5,18 +5,22 @@ from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     create_async_engine,
+    async_sessionmaker,
 )
+
 from sqlalchemy.orm import declarative_base
 from sqlalchemy_utils import create_database, database_exists
 from sqlmodel import SQLModel
+from loguru import logger
 
-from exc import db_exceptions
-from database.registry import Database
+from backend.database.config import databases, Database
+from backend.proj_exc import db_exceptions
+from backend.database.postgres.session_measurement import InstrumentedAsyncSession
 
 Base = declarative_base()
 
 
-class DbManager(AsyncSession):
+class PostgresSessionManager:
     """
     Context manager class for managing SQLAlchemy session objects.
     It manages opening transactions, returns session object,
@@ -31,33 +35,32 @@ class DbManager(AsyncSession):
     def __init__(
         self,
         *args,
-        database: Database,
+        database=None,
         suppress_exc: bool = False,
         **kwargs,
     ) -> None:
-        self._args = args
-        self._kwargs = kwargs
+        logger.debug("Initializing Postgres session manager")
         self.database = database
+        db_opt = databases["postgres"]
+        db_url: str = (
+            f"{db_opt.async_driver}://"
+            f"{db_opt.user}:{db_opt.password}@"
+            f"{db_opt.hostname}:{db_opt.port}/{db_opt.db_name}"
+        )
         self.engine: AsyncEngine = create_async_engine(
-            url=database.async_conn_string,
+            url=db_url,
             pool_size=50,
             max_overflow=20,
         )
         self.suppress_exc = suppress_exc
-        super(DbManager, self).__init__(
+        self.async_session_factory = async_sessionmaker(
             *args,
-            autocommit=False,
             bind=self.engine,
+            autocommit=False,
             autoflush=False,
-            # expire_on_commit=False,
+            class_=InstrumentedAsyncSession,
             **kwargs,
         )
-
-    @classmethod
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(DbManager, cls).__new__(cls)
-        return cls._instance
 
     @classmethod
     def init_db(cls, database: Database) -> None:
@@ -71,14 +74,37 @@ class DbManager(AsyncSession):
             create_database(engine.url)
         SQLModel.metadata.create_all(engine)
 
+    # async def create_and_populate_mock_db(self):
+    #     create_table_sql = """
+    #     CREATE TABLE IF NOT EXISTS users (
+    #         id SERIAL PRIMARY KEY,
+    #         username VARCHAR(50) UNIQUE NOT NULL,
+    #         email VARCHAR(255) UNIQUE NOT NULL
+    #     );
+    #     """
+    #
+    #     insert_sql = """
+    #     INSERT INTO users (username, email) VALUES
+    #         ('alice', 'alice@example.com'),
+    #         ('bob', 'bob@example.com')
+    #     ON CONFLICT (username) DO NOTHING;
+    #     """
+    #
+    #     async with self.session as session:
+    #         await session.execute(text(create_table_sql))
+    #         await session.execute(text(insert_sql))
+    #         await session.commit()
+
     async def __aenter__(self) -> AsyncSession:
         """
         :return: SQLAlchemy session object for context manager to operate on.
         """
-        self.session = self
+        logger.debug("Postgres session manager __aenter__")
+        self.session: AsyncSession = self.async_session_factory()
         return self.session
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        logger.debug("Postgres session manager __aexit__")
         if any((exc_type, exc_val, exc_tb)):
             if isinstance(exc_val, db_exceptions.ManualDbException):
                 # Forwarding dev control flow exceptions giving HTTP4xx
@@ -131,6 +157,6 @@ class DbManager(AsyncSession):
     @classmethod
     async def get_session(cls):
         if cls._instance is None:
-            raise RuntimeError("DbManager is not initialized")
+            raise RuntimeError("PostgresSessionManager is not initialized")
         async with cls._instance as session:
             yield session

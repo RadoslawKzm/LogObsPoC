@@ -10,8 +10,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import routers
-from database.postgres.session_manager import PostgresSessionManager
-from database.registry import databases
 from proj_exc import exception_handlers as exc
 from loguru_logger.log_config import logger_setup
 from middleware import add_http_middleware

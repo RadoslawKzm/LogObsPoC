@@ -1,5 +1,6 @@
-import pydantic
 import os
+
+import pydantic
 
 
 class Database(pydantic.BaseModel):
@@ -45,8 +46,17 @@ databases: dict[str, Database] = {
         password=os.getenv("POSTGRES_PASSWORD") or "postgres",
         hostname=os.getenv("POSTGRES_HOSTNAME") or "localhost",
         port=os.getenv("POSTGRES_PORT") or 5432,
-        db_name=os.getenv("POSTGRES_DB") or "LogsPoC",
+        db_name=os.getenv("POSTGRES_DB") or "LogsObsDb",
         sync_driver="postgresql+psycopg2",
         async_driver="postgresql+asyncpg",
+    ),
+    "mongo": Database(
+        user=os.getenv("MONGO_USER") or "mongo",
+        password=os.getenv("MONGO_PASSWORD") or "mongo",
+        hostname=os.getenv("MONGO_HOSTNAME") or "localhost",
+        port=os.getenv("MONGO_PORT") or 27017,
+        db_name=os.getenv("MONGO_DB") or "LogsPoC",
+        sync_driver="mongodb",  # no real use for sync in MongoDB client
+        async_driver="mongodb+motor"  # or just "mongodb" if using `motor`
     ),
 }
