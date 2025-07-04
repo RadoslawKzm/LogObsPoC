@@ -1,13 +1,13 @@
 import fastapi
 
-from proj_exc.base import BaseCustomException
+from backend.proj_exc.base import BaseCustomException
 
 
 class ApiException(BaseCustomException):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     external_message = "Internal Server Error. Our team is notified."
     internal_code = 1000
-    internal_message = "Unexpected error. This should not happen."
+    internal_message = "Unexpected API error. This should not happen."
 
 
 # === 11xx Authentication / Authorization (HTTP4xx) ===

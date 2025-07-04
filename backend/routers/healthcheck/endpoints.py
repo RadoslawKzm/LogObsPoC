@@ -13,7 +13,12 @@ healthcheck_router = fastapi.APIRouter(prefix="/health", tags=["health"])
     responses=response_examples.response_200,
 )
 async def health() -> fastapi.responses.JSONResponse:
-    responses = ["I am Groot", "This is the way", "Luke, I am your father", "Hodor..."]
+    responses = [
+        "I am Groot",
+        "This is the way",
+        "Luke, I am your father",
+        "Hodor...",
+    ]
     return fastapi.responses.JSONResponse(
         content={"data": random.choice(responses)},
         status_code=fastapi.status.HTTP_200_OK,

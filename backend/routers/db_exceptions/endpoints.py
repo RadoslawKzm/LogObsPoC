@@ -1,11 +1,8 @@
 import fastapi
 import sqlalchemy
-from fastapi import Depends
 import sqlalchemy.exc
 
-# from exc import api_exceptions
-from database.postgres.session import DbManager
-from exc import db_exceptions
+from backend.proj_exc import db_exceptions
 
 db_exceptions_router = fastapi.APIRouter(
     prefix="/database-exceptions",
@@ -14,11 +11,9 @@ db_exceptions_router = fastapi.APIRouter(
 
 
 @db_exceptions_router.get("/", status_code=200)
-async def database_endpoint(
-    session=Depends(DbManager.get_session),
-) -> fastapi.responses.JSONResponse:
+async def database_exception_endpoint() -> fastapi.responses.JSONResponse:
     """Showing random exception is propagated outside of session manager."""
-    x = 1 / 0
+    x = 1 / 0  # noqa: F841
     return fastapi.responses.JSONResponse(
         content={"data": "Example response"},
         status_code=fastapi.status.HTTP_200_OK,
@@ -28,7 +23,6 @@ async def database_endpoint(
 @db_exceptions_router.get("/db-exception/_id", status_code=200)
 async def developer_risen_exception_endpoint(
     _id: int,
-    session=Depends(DbManager.get_session),
 ) -> fastapi.responses.JSONResponse:
     """Scenario when developer is looking for ID in db in CORE module.
        ID is not found and dev is rising manual db exception to control flow.
@@ -45,11 +39,10 @@ async def developer_risen_exception_endpoint(
 
 @db_exceptions_router.get("/db-exception", status_code=200)
 async def database_error_endpoint(
-    session=Depends(DbManager.get_session),
 ) -> fastapi.responses.JSONResponse:
     """Scenario when something unexpected happens with database.
     We are getting some random SQLAlchemy exception.
-    DbManager is rising DB exception from HTTP5xx series.
+    PostgresSessionManager is rising DB exception from HTTP5xx series.
 
     :param session:
     :return:

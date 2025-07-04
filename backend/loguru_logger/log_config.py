@@ -1,7 +1,10 @@
 import sys
-from loguru import logger
+
 from asgi_correlation_id import correlation_id
+from loguru import logger
+
 from backend.loguru_logger import loguru_envs
+
 
 # -- Filters & formats --
 def correlation_id_filter(record: dict) -> bool:

@@ -17,3 +17,5 @@ greenlet
 loguru
 asgi_correlation_id
 isort
+ruff
+black

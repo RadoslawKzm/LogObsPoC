@@ -1,8 +1,7 @@
 import fastapi
 from loguru import logger
 
-from exc import api_exceptions
-
+from backend.proj_exc import api_exceptions
 
 api_exceptions_router = fastapi.APIRouter(
     prefix="/api-exceptions",
@@ -41,7 +40,7 @@ async def example_get_id_not_found(
     :return:
     """
     database = {1, 2, 3, 4, 5, 6, 7, 8, 9}
-    if not example_id in database:
+    if example_id not in database:
         raise api_exceptions.ResourceNotFoundException(
             internal_message=f"fGet example with id. "
             f"Request for {example_id=} not found"

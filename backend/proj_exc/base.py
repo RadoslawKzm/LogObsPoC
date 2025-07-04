@@ -8,14 +8,13 @@ class BaseCustomException(Exception):
 
     :param int http_code: HTTP code aimed to be shown to customers.
                            Hardcoded up in exception class.
-    :param str external_message: HTTP response message provided dynamically in code.
+    :param str external_message: HTTP response message provided dynamically.
                                  Aimed at customer so exclude any internal info
     :param int internal_code: Internal code hardcoded in exception class.
                                 Aimed for us.
     :param str internal_message: Message to internal logger provided in code.
+                                 raise ApiCustom(internal_message="Problem")
                                  Aimed at developers so be helpful to ourselves.
-    :param str internal_exc_tb: Exception info for dev dynamically in code.
-                                   Do not leak to customer. Be meaningful. For logs.
     """
 
     http_code: int = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -29,4 +28,3 @@ class BaseCustomException(Exception):
         super().__init__()
         if internal_message:
             self.internal_message = internal_message
-

@@ -1,12 +1,12 @@
 import fastapi
 
-from proj_exc.base import BaseCustomException
+from backend.proj_exc.base import BaseCustomException
 
 
 class DbException(BaseCustomException):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
-    external_message = "Something went wrong. Please try again later."
-    internal_code = 21000
+    external_message = "Internal Server Error. Our team is notified."
+    internal_code = 20000
     internal_message = "Unexpected SQL error. This should not happen."
 
 

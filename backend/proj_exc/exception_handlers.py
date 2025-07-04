@@ -2,8 +2,9 @@ import fastapi
 from fastapi.requests import Request
 from loguru import logger
 
+from backend.proj_exc.base import BaseCustomException
+
 from . import api_exceptions, db_exceptions
-from proj_exc.base import BaseCustomException
 
 
 def add_exception_handlers(app: fastapi.FastAPI) -> fastapi.FastAPI:

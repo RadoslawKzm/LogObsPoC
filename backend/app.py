@@ -10,11 +10,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import routers
-from proj_exc import exception_handlers as exc
-from loguru_logger.log_config import logger_setup
-from middleware import add_http_middleware
-# from middleware.logic import LoggingMiddleware
+from backend.loguru_logger.log_config import logger_setup
+from backend.middleware import add_http_middleware
+from backend.proj_exc import exception_handlers as exc
 
+# from middleware.logic import LoggingMiddleware
 
 
 @asynccontextmanager
@@ -50,8 +50,6 @@ _app.add_middleware(
 )
 
 
-
-
 # _app = exc.add_db_exception_handlers(_app)
 # _app = exc.add_api_exception_handlers(_app)
 _app = exc.add_exception_handlers(app=_app)
@@ -61,6 +59,7 @@ _app.include_router(router=routers.rbac)
 _app.include_router(router=routers.api_exceptions_router)
 _app.include_router(router=routers.db_exceptions_router)
 _app.include_router(router=routers.db_router)
+_app.include_router(router=routers.delay_router)
 
 
 app = _app
