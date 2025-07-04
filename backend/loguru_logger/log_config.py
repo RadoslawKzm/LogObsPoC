@@ -59,7 +59,7 @@ def setup_console_human_logger():
 
 def setup_file_human_logger():
     logger.add(
-        "backend/logs/human_readable.log",
+        "logs/human_readable.log",
         level=loguru_envs.FILE_HUMAN_LOGGER_LEVEL,
         format=human_readable_format,
         filter=correlation_id_filter,
@@ -74,7 +74,7 @@ def setup_file_human_logger():
 
 def setup_safe_json_logger():
     logger.add(
-        "backend/logs/safe.json",
+        "logs/safe.json",
         level=loguru_envs.SAFE_JSON_LOGGER_LEVEL,
         format="{message}",
         filter=correlation_id_filter,
