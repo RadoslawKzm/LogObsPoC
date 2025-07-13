@@ -1,3 +1,4 @@
 from .postgres.postgres_implementation import PostgresImplementation
 from .mongo.mongo_implementation import MongoImplementation
+from .mock.mock_implementation import MockImplementation
 from .interface import DatabaseInterface

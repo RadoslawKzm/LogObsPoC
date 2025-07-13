@@ -13,6 +13,11 @@ sqlmodel
 aiosqlite
 greenlet
 
+# Test
+pytest
+pytest-asyncio
+
+
 # Logs and lint
 loguru
 asgi_correlation_id

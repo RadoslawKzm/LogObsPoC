@@ -11,8 +11,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy_utils import create_database, database_exists
 from sqlmodel import SQLModel
 
-from backend.api.v2.database.config import Database, databases
-from backend.api.v2.database.postgres.session_measurement import (
+from backend.api.database.config import Database, databases
+from backend.api.database.postgres.session_measurement import (
     InstrumentedAsyncSession,
 )
 from backend.api.v2.exc import db_exceptions

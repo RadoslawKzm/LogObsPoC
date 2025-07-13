@@ -1,8 +1,8 @@
 import typing
 
 from loguru import logger
-from backend.api.v2.database.interface import DatabaseInterface
-from backend.api.v2.database.mongo.session_manager import MongoSessionManager
+from backend.api.database.interface import DatabaseInterface
+from backend.api.database.mongo.session_manager import MongoSessionManager
 
 
 class MongoImplementation(DatabaseInterface):
