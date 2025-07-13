@@ -2,7 +2,7 @@ import typing
 
 from loguru import logger
 from backend.api.database.interface import DatabaseInterface
-from backend.api.database.postgres.session_manager import PostgresSessionManager
+from backend.api.database.postgres import PostgresSessionManager
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession

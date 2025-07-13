@@ -2,7 +2,7 @@ import typing
 
 from loguru import logger
 from backend.api.database.interface import DatabaseInterface
-from backend.api.database.mock.session_manager import MockSessionManager
+from backend.api.database.mock import MockSessionManager
 
 
 class MockImplementation(DatabaseInterface):
