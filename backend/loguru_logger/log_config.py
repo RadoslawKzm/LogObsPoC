@@ -116,7 +116,7 @@ def setup_safe_json_logger():
 
 def setup_unsafe_json_logger():
     logger.add(
-        "backend/logs/unsafe.json",
+        "logs/unsafe.json",
         level=loguru_envs.UNSAFE_JSON_LOGGER_LEVEL,
         format="{message}",
         filter=correlation_id_filter,
