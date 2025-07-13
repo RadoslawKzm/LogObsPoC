@@ -11,6 +11,9 @@ import routers
 from backend.loguru_logger.log_config import logger_setup
 from backend.middleware import add_http_middleware
 from backend.proj_exc import exception_handlers as exc
+from backend.api.v1.app import v1_app
+
+# from middleware.logic import LoggingMiddleware
 
 
 @asynccontextmanager
@@ -45,6 +48,10 @@ _app.add_middleware(
     expose_headers=["X-Request-ID"],
 )
 
+_app.mount(path="/v1", app=v1_app)
+app.mount(path=latest_version.url, app=latest_version.imported_module)
+# _app = exc.add_db_exception_handlers(_app)
+# _app = exc.add_api_exception_handlers(_app)
 _app = exc.add_exception_handlers(app=_app)
 _app.include_router(router=routers.about)
 _app.include_router(router=routers.healthcheck)

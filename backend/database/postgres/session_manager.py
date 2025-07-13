@@ -106,7 +106,7 @@ class PostgresSessionManager:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         logger.debug("Postgres session manager __aexit__")
         if any((exc_type, exc_val, exc_tb)):
-            if isinstance(exc_val, db_exceptions.ManualDbException):
+            if isinstance(exc_val, db_exceptions.ManualDbError):
                 # Forwarding dev control flow exceptions giving HTTP4xx
                 raise exc_val
             if not isinstance(exc_val, sqlalchemy.exc.SQLAlchemyError):
@@ -144,7 +144,7 @@ class PostgresSessionManager:
             await self.session.commit()
         except Exception:
             await self.session.rollback()
-            raise db_exceptions.DbException(
+            raise db_exceptions.DbError(
                 internal_message="Unexpected exception in __exit__"
                 " while trying to commit session."
             )

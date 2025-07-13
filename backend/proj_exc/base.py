@@ -1,8 +1,9 @@
 import fastapi
 
 
-class BaseCustomException(Exception):
-    """Every custom exception class has to have implemented unique message.
+class BaseCustomError(Exception):
+    """Every custom exception is following ...Error rule N818
+    Every custom exception class has to have implemented unique message.
     While using it as baseclass code yourself: http_code, internal_code, external_msg.
     Internal_msg and internal_exception will be dynamic from inside of code.
 

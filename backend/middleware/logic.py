@@ -13,17 +13,24 @@ def add_http_middleware(*, app: fastapi.FastAPI):
             http_version=request.scope.get("http_version"),
             method=request.method,
             path=request.url.path,
-        ).info(f"HTTP Inbound {request.method} {request.url.path}")
+        ).log("START", f"HTTP Inbound {request.method} {request.url.path}")
         start = time.perf_counter()
         response = await call_next(request)
         duration = time.perf_counter() - start
-        logger.bind(
+        log_obj = logger.bind(
             method=request.method,
             path=request.url.path,
             response_code=response.status_code,
             duration=duration,
-        ).info(
+        )
+        msg = (
             f"HTTP Outbound {request.method} {request.url.path} | "
             f"{response.status_code} {duration:.3f}s"
         )
+        if 200 <= response.status_code < 299:
+            log_obj.success(msg)
+        elif 300 <= response.status_code < 499:
+            log_obj.log("EXPECTED", msg)
+        else:  # 500++
+            log_obj.error(msg)
         return response

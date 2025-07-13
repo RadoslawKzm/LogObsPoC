@@ -1,4 +1,6 @@
+import json
 import sys
+import traceback
 
 from asgi_correlation_id import correlation_id
 from loguru import logger
@@ -7,6 +9,30 @@ from backend.loguru_logger import loguru_envs
 
 
 # -- Filters & formats --
+def safe_log(obj: str | dict) -> str:
+    """Parsing dictionaries to avoid loguru key errors.
+    When putting dict as lambda in lazy log,
+    Loguru tends to unpack it and get provided dictionary as keys.
+    This leads to keyerror in loguru.
+    Adding parenthesis fixes problem.
+    """
+    if type(obj) != dict and type(obj) != str:
+        try:
+            obj = str(obj)
+        except Exception:
+            logger.critical(
+                f"LOGURU EXCEPTION: safe_log parsing!!! {traceback.format_exc()}"
+            )
+    if type(obj) == dict:
+        try:
+            obj = json.dumps(obj, default=str)
+        except Exception:
+            logger.critical(
+                f"LOGURU EXCEPTION: safe_log parsing!!! {traceback.format_exc()}"
+            )
+    return obj.replace("{", "{{").replace("}", "}}")
+
+
 def correlation_id_filter(record: dict) -> bool:
     corr_id = correlation_id.get() or "No correlation_id"
     record["extra"]["correlation_id"] = corr_id
@@ -32,6 +58,7 @@ def human_readable_format(record):
     function = record["function"]
     line = record["line"]
     message = record["message"]
+
 
     return (
         f"<level>{level}</level> | "
@@ -66,7 +93,7 @@ def setup_file_human_logger():
         rotation="2 hours",
         retention="2 hours",
         enqueue=True,
-        backtrace=True,
+        backtrace=False,
         diagnose=True,
         serialize=False,
     )
@@ -102,9 +129,18 @@ def setup_unsafe_json_logger():
     )
 
 
+# -- Custom Levels --
+# def _expected(self, message, *args, **kwargs):
+#     return self.log("EXPECTED", message, *args, **kwargs)
+
+
 # -- Setup function --
 def logger_setup():
     logger.remove()
+    logger.level("START", no=21, color="<green>", icon="🚀")
+    logger.level("EXPECTED", no=24, color="<yellow>", icon="🤝")
+    # logger.expected = _expected.__get__(logger)
+
     setup_console_human_logger()
     setup_file_human_logger()
     setup_safe_json_logger()
@@ -117,6 +153,8 @@ def logger_setup():
 TRACE (5): used to record fine-grained information about the program's execution path for diagnostic and analytics purposes.
 DEBUG (10): used by developers to record messages for debugging purposes.
 INFO (20): used to record informational messages that describe the normal operation of the program.
+START (21): *CUSTOM* used only in middleware as indication of trace start.
+EXPECTED (24): *CUSTOM* used for any hand risen HTTPException. App works ok, it is just not a SUCCESS.
 SUCCESS (25): similar to INFO but used to indicate the success of an operation.
 WARNING (30): used to indicate an unusual event that may require further investigation.
 ERROR (40): used to record error conditions that affected a specific operation.

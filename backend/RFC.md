@@ -249,7 +249,7 @@ We already introduced **custom exception classes** - now it's time to make them 
 ### ✅ Benefits of Centralized Exception Handling
 
 #### 🧩 Works Hand-in-Hand with Custom Exceptions
-- Each exception type (`ApiException`, `DbException`, etc.) can be mapped to a precise response.
+- Each exception type (`ApiError`, `DbError`, etc.) can be mapped to a precise response.
 - Exception logic is *defined once* and applies *everywhere* - automatic, clean, and scalable.
 
 #### 🛠️ Clean Separation of Internal vs External Concerns
@@ -282,7 +282,7 @@ logger.opt(lazy=True, exception=exc).error(
 - You can define different behavior per exception - including logging level, response headers, retry hints, etc.
 - Example from our app:
 ```python
-@app.exception_handler(api_exceptions.ApiException)
+@app.exception_handler(api_exceptions.ApiError)
 async def api_exception_handler(...): ...
 ```
 
@@ -364,10 +364,10 @@ raise db_exceptions.RecordNotFound()
 Then, our FastAPI exception handlers catch and format those automatically:
 
 ```python
-@app.exception_handler(db_exceptions.DbException)
+@app.exception_handler(db_exceptions.DbError)
 async def db_exception_handler(
     request: Request,
-    exc: db_exceptions.DbException,
+    exc: db_exceptions.DbError,
 ) -> fastapi.responses.JSONResponse:
     logger.opt(lazy=True, exception=exc).error(
         lambda: f"Internal message: {exc.internal_message}, "
