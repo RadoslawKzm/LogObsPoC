@@ -1,0 +1,22 @@
+import random
+
+import fastapi
+
+from . import response_examples
+
+health_router = fastapi.APIRouter(prefix="/health", tags=["health"])
+
+
+@health_router.get(
+    "/",
+    status_code=200,
+    responses=response_examples.response_200,
+)
+async def health() -> dict:
+    responses = [
+        "I am Groot",
+        "This is the way",
+        "Luke, I am your father",
+        "Hodor...",
+    ]
+    return {"data": random.choice(responses)}
