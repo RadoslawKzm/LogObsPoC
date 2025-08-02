@@ -1,10 +1,12 @@
 import typing
+
 from loguru import logger
 
+from backend.api.v2.exceptions import db_exceptions
 from backend.database.interface import DatabaseInterface
 from backend.database.mock import MockSessionManager
+
 from .database import books
-from backend.api.v2.exceptions import db_exceptions
 
 
 class MockImplementation(DatabaseInterface):
@@ -93,4 +95,3 @@ class MockImplementation(DatabaseInterface):
         logger.debug("Deleting many records in Mock Database")
         for record_id in list(books.keys()):
             del books[record_id]
-

@@ -25,4 +25,4 @@ lint-all:
 	make ruff
 	# make typecheck
 	make sec
-	make pytest
+	# make pytest

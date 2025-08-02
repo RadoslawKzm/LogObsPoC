@@ -1,9 +1,10 @@
+import random
 import time
 
+import fastapi
 import psutil
 from loguru import logger
-import random
-import fastapi
+
 from . import response_examples
 
 health_router = fastapi.APIRouter(prefix="/health-app", tags=["health-app"])
@@ -83,7 +84,7 @@ def _get_prev_times(
 
 
 def read_cgroup(path: str) -> int:
-    with open(path, "r") as f:
+    with open(path) as f:
         return int(f.read().strip())
 
 

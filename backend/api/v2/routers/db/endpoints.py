@@ -48,7 +48,7 @@ async def mongo_endpoint(
 
 
 @db_router.get("/mock/record/{record_id}", status_code=200)
-async def mock_endpoint(
+async def mock_endpoint_1(
     mock_db: typing.Annotated[
         "MockImplementation",
         Depends(DatabaseInterface.get_db_impl(db_name="Mock")),
@@ -59,17 +59,17 @@ async def mock_endpoint(
 
 
 @db_router.get("/mock/many_record/", status_code=200)
-async def mock_endpoint(
+async def mock_endpoint_2(
     mock_db: typing.Annotated[
         "MockImplementation",
         Depends(DatabaseInterface.get_db_impl(db_name="Mock")),
     ],
-)->list:
+) -> list:
     return await mock_db.get_many_records()
 
 
 @db_router.delete("/mock/record/{record_id}", status_code=204)
-async def mock_endpoint(
+async def mock_endpoint_3(
     mock_db: typing.Annotated[
         "MockImplementation",
         Depends(DatabaseInterface.get_db_impl(db_name="Mock")),
@@ -80,7 +80,7 @@ async def mock_endpoint(
 
 
 @db_router.delete("/mock/many_records", status_code=204)
-async def mock_endpoint(
+async def mock_endpoint_4(
     mock_db: typing.Annotated[
         "MockImplementation",
         Depends(DatabaseInterface.get_db_impl(db_name="Mock")),

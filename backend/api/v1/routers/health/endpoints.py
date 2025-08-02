@@ -1,7 +1,6 @@
 import random
 
-from fastapi import APIRouter, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter
 
 from backend.api.v1.routers.health import response_examples
 

@@ -1,7 +1,7 @@
 import traceback
 import typing
 
-from fastapi import HTTPException, status, FastAPI
+from fastapi import FastAPI, HTTPException, status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from loguru import logger
@@ -12,11 +12,11 @@ if typing.TYPE_CHECKING:
 from backend.loguru_logger import safe_log
 
 from .api import ApiError
-from .db import DbError
-from .base import BaseCustomError
-from .core import CoreError
 from .auth import AuthError
+from .base import BaseCustomError
 from .cloud import CloudError
+from .core import CoreError
+from .db import DbError
 
 
 def log_traceback(
@@ -78,7 +78,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         )
 
     @app.exception_handler(AuthError)
-    async def api_exception_handler(
+    async def auth_exception_handler(
         request: Request,
         exc: AuthError,
     ) -> JSONResponse:
@@ -89,7 +89,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         )
 
     @app.exception_handler(CoreError)
-    async def api_exception_handler(
+    async def core_exception_handler(
         request: Request,
         exc: CoreError,
     ) -> JSONResponse:
@@ -100,7 +100,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         )
 
     @app.exception_handler(CloudError)
-    async def api_exception_handler(
+    async def cloud_exception_handler(
         request: Request,
         exc: CloudError,
     ) -> JSONResponse:

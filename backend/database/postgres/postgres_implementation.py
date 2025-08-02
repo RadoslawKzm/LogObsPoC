@@ -1,7 +1,6 @@
 import typing
 
 from loguru import logger
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.interface import DatabaseInterface
@@ -75,7 +74,7 @@ class PostgresImplementation(DatabaseInterface):
         return msg
 
     async def delete_record(self, record: typing.Any) -> str:
-        msg = f"Deleting record in Postgres"
+        msg = "Deleting record in Postgres"
         logger.debug(msg)
         return msg
 
@@ -87,6 +86,6 @@ class PostgresImplementation(DatabaseInterface):
         Function name contains 'many' due to similarities with delete_record.
         There is a risk of mistake while function call.
         """
-        msg = f"Deleting many records in Postgres"
+        msg = "Deleting many records in Postgres"
         logger.debug(msg)
         return msg

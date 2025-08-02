@@ -1,6 +1,6 @@
-# import env
 import uvicorn
 from loguru import logger
+
 from backend.config import settings
 
 if __name__ == "__main__":

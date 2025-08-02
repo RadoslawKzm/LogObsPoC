@@ -58,7 +58,6 @@ def human_readable_format(record):
     function = record["function"]
     line = record["line"]
     message = record["message"]
-
     return (
         f"<level>{level}</level> | "
         f"<green>{corr_id}</green> | "
@@ -151,11 +150,19 @@ def logger_setup():
     logger.level("HTTPExc", no=24, color="<green>", icon="🏁")
 
     # TOP app
-    logger.level("START", no=21, color=f"<underline><bold>{MAGENTA}", icon="🛬")
+    logger.level(
+        "START", no=21, color=f"<underline><bold>{MAGENTA}", icon="🛬"
+    )
     logger.level("END 200", no=26, color="<underline><bold><green>", icon="✅")
-    logger.level("END 300", no=27, color=f"<underline><bold>{WARM_ORANGE}", icon="🔀")
-    logger.level("END 400", no=28, color=f"<underline><bold>{ORANGE_RED}", icon="⚠️")
-    logger.level("END 500", no=29, color=f"<underline><bold>{BOLD_RED}", icon="💥")
+    logger.level(
+        "END 300", no=27, color=f"<underline><bold>{WARM_ORANGE}", icon="🔀"
+    )
+    logger.level(
+        "END 400", no=28, color=f"<underline><bold>{ORANGE_RED}", icon="⚠️"
+    )
+    logger.level(
+        "END 500", no=29, color=f"<underline><bold>{BOLD_RED}", icon="💥"
+    )
 
     setup_console_human_logger()
     setup_file_human_logger()

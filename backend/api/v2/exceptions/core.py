@@ -4,6 +4,7 @@ from .base import BaseCustomError
 
 # === 4xxx Core Errors (HTTP5xx) ===
 
+
 class CoreError(BaseCustomError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     external_message = "Internal Server Error. Our team is notified."
@@ -29,7 +30,7 @@ class ResourceConflictError(CoreError):
     http_code = fastapi.status.HTTP_409_CONFLICT
     external_message = "Conflict with current state."
     internal_code = 4300
-    internal_message = "Resource state conflict, check concurrency or versioning."
+    internal_message = "Resource state conflict check concurrency, versioning."
 
 
 class ExternalServiceError(CoreError):
@@ -57,5 +58,6 @@ class FeatureDisabledError(CoreError):
     http_code = fastapi.status.HTTP_503_SERVICE_UNAVAILABLE
     external_message = "This feature is temporarily disabled."
     internal_code = 4700
-    internal_message = "Feature has been intentionally disabled by system configuration."
-
+    internal_message = (
+        "Feature has been intentionally disabled by system configuration."
+    )

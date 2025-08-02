@@ -1,16 +1,16 @@
 import pytest
 from backend.api.v2.exceptions import (
-    api_exceptions,
-    auth_exceptions,
-    core_exceptions,
-    cloud_exceptions,
-    db_exceptions,
     BaseCustomError,
     add_exception_handlers,
+    api_exceptions,
+    auth_exceptions,
+    cloud_exceptions,
+    core_exceptions,
+    db_exceptions,
 )
+from backend.loguru_logger import logger_setup
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-from backend.loguru_logger import logger_setup
 
 logger_setup()
 
@@ -24,7 +24,7 @@ def test_app():
 
     # Routes that raise specific exceptions
     @app.get("/raise-http-error")
-    async def raise_api():
+    async def raise_http():
         raise HTTPException(status_code=500, detail=error_msg)
 
     @app.get("/raise-api-error")
@@ -46,7 +46,7 @@ def test_app():
         )
 
     @app.get("/raise-cloud-error")
-    async def raise_core():
+    async def raise_cloud():
         raise cloud_exceptions.CloudError(
             internal_message="Validation failed",
         )

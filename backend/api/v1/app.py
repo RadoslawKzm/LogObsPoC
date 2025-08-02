@@ -5,8 +5,9 @@ import uvicorn
 from fastapi import FastAPI
 from loguru import logger
 
-from . import routers
 from backend.loguru_logger import logger_setup
+
+from . import routers
 
 
 @asynccontextmanager

@@ -4,6 +4,7 @@ from .base import BaseCustomError
 
 # === 5xxx Authentication / Authorization (HTTP4xx) ===
 
+
 # Base class for all authentication/authorization errors
 class AuthError(BaseCustomError):
     http_code = fastapi.status.HTTP_401_UNAUTHORIZED
@@ -13,6 +14,7 @@ class AuthError(BaseCustomError):
 
 
 # === 51xx Authentication Errors ===
+
 
 class AuthenticationError(AuthError):
     http_code = fastapi.status.HTTP_401_UNAUTHORIZED
@@ -36,6 +38,7 @@ class SessionExpiredError(AuthenticationError):
 
 
 # === 52xx Authorization Errors ===
+
 
 class AuthorizationError(AuthError):
     http_code = fastapi.status.HTTP_401_UNAUTHORIZED

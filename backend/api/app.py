@@ -11,8 +11,8 @@ from loguru import logger
 
 from backend.api import v1_app, v2_app
 from backend.api.health_check import health_router
-from backend.loguru_logger.log_config import logger_setup
 from backend.config import settings
+from backend.loguru_logger.log_config import logger_setup
 
 
 @asynccontextmanager
@@ -26,13 +26,20 @@ _app = FastAPI(lifespan=lifespan, root_path="")
 
 @_app.middleware("http")
 async def log_requests(request: fastapi.Request, call_next):
-    logger.bind(
+    http_version = request.scope.get("http_version")
+    with logger.contextualize(
         user_agent=request.headers["user-agent"] or "",
         client_ip=request.client.host,
-        http_version=request.scope.get("http_version"),
+        http_version=http_version,
         method=request.method,
         path=request.url.path,
-    ).log("START", f"HTTP Inbound {request.method} {request.url.path}")
+    ):
+
+        logger.log(
+            "START",
+            f"HTTP {http_version} Inbound:TOP | "
+            f"{request.method} {request.url.path}",
+        )
     start = time.perf_counter()
     response = await call_next(request)
     duration = time.perf_counter() - start
@@ -40,20 +47,20 @@ async def log_requests(request: fastapi.Request, call_next):
         f"HTTP Outbound {request.method} {request.url.path} | "
         f"{response.status_code} {duration:.3f}s"
     )
-    log_obj = logger.bind(
+    with logger.contextualize(
         method=request.method,
         path=request.url.path,
         response_code=response.status_code,
         duration=duration,
-    )
-    if 200 <= response.status_code <= 299:
-        log_obj.log("END 200", msg)
-    elif 300 <= response.status_code <= 399:
-        log_obj.log("END 300", msg)
-    elif 400 <= response.status_code <= 499:
-        log_obj.log("END 400", msg)
-    else:  # 500++
-        log_obj.log("END 500", msg)
+    ):
+        if 200 <= response.status_code <= 299:
+            logger.log("END 200", msg)
+        elif 300 <= response.status_code <= 399:
+            logger.log("END 300", msg)
+        elif 400 <= response.status_code <= 499:
+            logger.log("END 400", msg)
+        else:  # 500++
+            logger.log("END 500", msg)
     return response
 
 
@@ -82,23 +89,9 @@ logger.info("LATEST initializing...")
 v2_app.include_router(health_router)
 _app.mount(path="/api", app=v2_app)
 logger.info("Application startup complete.")
-app_link: str = f"http://{settings.APP_HOST}:{settings.APP_PORT}/api{_app.docs_url}"
+app_link: str = (
+    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api{_app.docs_url}"
+)
 logger.info(f"Uvicorn running on {app_link} (Press CTRL+C to quit)")
 
 app = _app
-
-
-# if __name__ == "__main__":
-#     """
-#     Necessary for pycharm debugging purposes.
-#     If we run your module imported by another
-#       (including gunicorn) using something like:
-#     from manage import app then the value is 'app' or 'manage.app'
-#     """
-#     uvicorn.run(
-#         "app:app",
-#         host="0.0.0.0",
-#         port=8765,
-#         log_config=None,
-#         access_log=False,
-#     )

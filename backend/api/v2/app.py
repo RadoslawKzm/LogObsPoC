@@ -9,10 +9,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from backend.loguru_logger.log_config import logger_setup
+
 from . import routers
 from .exceptions import exception_handlers as exc
 from .middleware import add_http_middleware
-from backend.loguru_logger.log_config import logger_setup
 
 
 @asynccontextmanager

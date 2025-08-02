@@ -125,17 +125,6 @@ class PostgresSessionManager:
                     x=lambda: self.suppress_exc,
                 )
                 return self.suppress_exc  # gracefully suppressing if True
-            # Matching unexpected exceptions giving HTTP5xx
-            if isinstance(exc_val, sqlalchemy.exc.OperationalError):
-                raise db_exceptions.OperationalError()
-            if isinstance(exc_val, sqlalchemy.exc.IntegrityError):
-                raise db_exceptions.IntegrityError()
-            if isinstance(exc_val, sqlalchemy.exc.DataError):
-                raise db_exceptions.DataError()
-            if isinstance(exc_val, sqlalchemy.exc.ProgrammingError):
-                raise db_exceptions.ProgrammingError()
-            if isinstance(exc_val, sqlalchemy.exc.DatabaseError):
-                raise db_exceptions.DatabaseError()
             raise db_exceptions.UnexpectedError from exc_val
 
         try:

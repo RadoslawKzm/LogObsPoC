@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class AllowedDbMethod(str, Enum):
     get_record = "get_record"
     get_many_records = "get_many_records"
