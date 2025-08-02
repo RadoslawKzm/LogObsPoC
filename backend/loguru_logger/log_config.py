@@ -2,10 +2,9 @@ import json
 import sys
 import traceback
 
+import pydantic_settings
 from asgi_correlation_id import correlation_id
 from loguru import logger
-
-from backend.loguru_logger import loguru_envs
 
 
 # -- Filters & formats --
@@ -68,13 +67,13 @@ def human_readable_format(record):
 
 
 # -- Setup functions per sink --
-def setup_console_human_logger():
+def setup_console_human_logger(settings: pydantic_settings.BaseSettings):
     logger.add(
         sys.stderr,
-        level=loguru_envs.CONSOLE_HUMAN_LOGGER_LEVEL,
+        level=settings.LOG_LEVEL,
         format=human_readable_format,
         filter=correlation_id_filter,
-        colorize=True,
+        colorize=True if settings.ENV_TYPE == "LOCAL" else False,
         enqueue=True,
         backtrace=False,
         diagnose=True,
@@ -83,10 +82,10 @@ def setup_console_human_logger():
     )
 
 
-def setup_file_human_logger():
+def setup_file_human_logger(settings: pydantic_settings.BaseSettings):
     logger.add(
         "logs/human_readable.log",
-        level=loguru_envs.FILE_HUMAN_LOGGER_LEVEL,
+        level=settings.LOG_LEVEL,
         format=human_readable_format,
         filter=correlation_id_filter,
         rotation="2 hours",
@@ -98,10 +97,10 @@ def setup_file_human_logger():
     )
 
 
-def setup_safe_json_logger():
+def setup_safe_json_logger(settings: pydantic_settings.BaseSettings):
     logger.add(
         "logs/safe.json",
-        level=loguru_envs.SAFE_JSON_LOGGER_LEVEL,
+        level=settings.LOG_LEVEL,
         format="{message}",
         filter=correlation_id_filter,
         rotation="1 hour",
@@ -113,10 +112,10 @@ def setup_safe_json_logger():
     )
 
 
-def setup_unsafe_json_logger():
+def setup_unsafe_json_logger(settings: pydantic_settings.BaseSettings):
     logger.add(
         "logs/unsafe.json",
-        level=loguru_envs.UNSAFE_JSON_LOGGER_LEVEL,
+        level=settings.LOG_LEVEL,
         format="{message}",
         filter=correlation_id_filter,
         rotation="1 hour",
@@ -141,7 +140,7 @@ BOLD_RED = "<bold><fg 196>"
 
 
 # -- Setup function --
-def logger_setup():
+def logger_setup(settings: pydantic_settings.BaseSettings):
     logger.remove()
 
     # Sub versions
@@ -164,10 +163,10 @@ def logger_setup():
         "END 500", no=29, color=f"<underline><bold>{BOLD_RED}", icon="💥"
     )
 
-    setup_console_human_logger()
-    setup_file_human_logger()
-    setup_safe_json_logger()
-    setup_unsafe_json_logger()
+    setup_console_human_logger(settings)
+    setup_file_human_logger(settings)
+    setup_safe_json_logger(settings)
+    setup_unsafe_json_logger(settings)
 
 
 # -- Log level docs for reference (optional) --

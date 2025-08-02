@@ -13,11 +13,12 @@ from backend.api import v1_app, v2_app
 from backend.api.health_check import health_router
 from backend.config import settings
 from backend.loguru_logger.log_config import logger_setup
+from backend.config import settings
 
 
 @asynccontextmanager
 async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
-    logger_setup()
+    logger_setup(settings)
     yield
 
 
