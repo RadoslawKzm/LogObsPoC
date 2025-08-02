@@ -1,22 +1,31 @@
 import typing
-
 from loguru import logger
 
 from backend.database.interface import DatabaseInterface
 from backend.database.mock import MockSessionManager
+from .database import books
+from backend.api.v2.exceptions import db_exceptions
 
 
 class MockImplementation(DatabaseInterface):
     database_name = "Mock"
     session_factory = MockSessionManager()
 
-    def __init__(self, *args, session, **kwargs):
+    def __init__(self, *args, session, **kwargs) -> None:
         self.session = session
 
-    async def get_record(self):
+    async def get_record(self, record_id: int) -> dict:
         logger.debug("Getting record from Mock Database")
+        book = books.get(record_id, None)
+        if not book:
+            msg: str = f"No book with id {record_id} found"
+            raise db_exceptions.RecordNotFoundError(
+                internal_message=msg,
+                external_message=msg,
+            )
+        return book
 
-    async def get_many_records(self):
+    async def get_many_records(self) -> list[dict]:
         """Need to be separate from get_record.
         Some databases offer bulk operations.
         If db supports bulk get, please implement.
@@ -25,13 +34,15 @@ class MockImplementation(DatabaseInterface):
         There is a risk of mistake while function call.
         """
         logger.debug("Getting many records to Mock Database")
-        return 1
+        return list(books.values())
 
-    async def add_record(self, record: typing.Any) -> list:
+    async def add_record(self, record: typing.Any) -> str:
         logger.debug("Adding record to Mock Database")
-        return [1, 2, 3]
+        msg: str = "Adding record to Mock Database"
+        logger.debug(msg)
+        return msg
 
-    async def add_many_records(self, records: list[typing.Any]):
+    async def add_many_records(self, records: list[typing.Any]) -> str:
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -39,12 +50,16 @@ class MockImplementation(DatabaseInterface):
         Function name contains 'many' due to similarities with add_record.
         There is a risk of mistake while function call.
         """
-        logger.debug("Adding many records to Mock Database")
+        msg: str = "Adding many records to Mock Database"
+        logger.debug(msg)
+        return msg
 
-    async def update_record(self, record: typing.Any):
-        logger.debug("Updating record in Mock Database")
+    async def update_record(self, record: typing.Any) -> str:
+        msg: str = "Updating record in Mock Database"
+        logger.debug(msg)
+        return msg
 
-    async def update_many_records(self, records: list[typing.Any]):
+    async def update_many_records(self, records: list[typing.Any]) -> str:
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -52,12 +67,22 @@ class MockImplementation(DatabaseInterface):
         Function name contains 'many' due to similarities with add_record.
         There is a risk of mistake while function call.
         """
-        logger.debug("Updating many records in Mock Database")
+        msg: str = "Updating many records in Mock Database"
+        logger.debug(msg)
+        return msg
 
-    async def delete_record(self, record: typing.Any):
+    async def delete_record(self, record_id: int) -> None:
         logger.debug("Deleting record in Mock Database")
+        book = books.get(record_id, None)
+        if not book:
+            msg: str = f"No book with id {record_id} found"
+            raise db_exceptions.RecordNotFoundError(
+                internal_message=msg,
+                external_message=msg,
+            )
+        del books[record_id]
 
-    async def delete_many_records(self, records: list[typing.Any]):
+    async def delete_many_records(self, *args) -> None:
         """Need to be separate from delete_record.
         Some databases offer bulk operations.
         If db supports bulk delete, please implement.
@@ -66,3 +91,6 @@ class MockImplementation(DatabaseInterface):
         There is a risk of mistake while function call.
         """
         logger.debug("Deleting many records in Mock Database")
+        for record_id in list(books.keys()):
+            del books[record_id]
+

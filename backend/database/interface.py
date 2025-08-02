@@ -42,7 +42,7 @@ class DatabaseInterface(abc.ABC):
         cls._registry[cls.database_name.lower()] = cls
 
     @abc.abstractmethod
-    def __init__(self, *args, session, **kwargs):
+    def __init__(self, *args, session, **kwargs) -> None:
         "make db client required at class writing"
 
     @staticmethod
@@ -67,7 +67,7 @@ class DatabaseInterface(abc.ABC):
         return get_db
 
     @abc.abstractmethod
-    def get_record(self):
+    def get_record(self, *args, **kwargs):
         pass
 
     @abc.abstractmethod
