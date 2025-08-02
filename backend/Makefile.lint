@@ -1,0 +1,28 @@
+.PHONY: black
+black:
+	black .
+
+.PHONY: ruff
+ruff:
+	ruff check . --fix
+
+.PHONY: mypy
+mypy:
+	mypy backend tests
+
+.PHONY: sec
+sec:
+	bandit -r backend tests -ll
+	safety check --full-report
+
+.PHONY: pytest
+pytest:
+	PYTHONPATH=.. pytest
+
+.PHONY: lint-all
+lint-all:
+	make black
+	make ruff
+	# make typecheck
+	make sec
+	make pytest

@@ -3,12 +3,14 @@ import typing
 import fastapi
 from fastapi import Depends
 
-from backend.api.database import DatabaseInterface
+from backend.database import DatabaseInterface
 
 if typing.TYPE_CHECKING:
-    from backend.api.database import PostgresImplementation
-    from backend.api.database import MongoImplementation
-    from backend.api.database import MockImplementation
+    from backend.database import (
+        MockImplementation,
+        MongoImplementation,
+        PostgresImplementation,
+    )
 
 
 db_router = fastapi.APIRouter(prefix="/database", tags=["Database"])
@@ -35,7 +37,7 @@ async def mongo_endpoint(
 
 
 @db_router.get("/mock", status_code=200)
-async def  mock_endpoint(
+async def mock_endpoint(
     mock_db: typing.Annotated[
         "MockImplementation",
         Depends(DatabaseInterface.get_db_impl(db_name="Mock")),

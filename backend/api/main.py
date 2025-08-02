@@ -1,6 +1,7 @@
+# import env
 import uvicorn
 from loguru import logger
-import env
+from backend.config import settings
 
 if __name__ == "__main__":
     """
@@ -16,8 +17,8 @@ if __name__ == "__main__":
     logger.info("Waiting for application startup.")
     uvicorn.run(
         "app:app",
-        host=env.APP_HOST,
-        port=env.APP_PORT,
+        host=settings.APP_HOST,
+        port=settings.APP_PORT,
         log_config=None,
         access_log=False,
         # log_level="critical"

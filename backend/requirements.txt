@@ -3,6 +3,8 @@ fastapi
 httpx
 uvicorn
 gunicorn
+pydantic-settings
+
 
 # Database modules
 sqlalchemy
@@ -24,3 +26,5 @@ asgi_correlation_id
 isort
 ruff
 black
+
+psutil # health check hardware stats

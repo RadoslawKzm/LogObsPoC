@@ -1,0 +1,13 @@
+START    | 426d2dbcd44343ab8234b167334d9fdb | 2025-07-13 23:19:34.053 | app:log_requests:35 - HTTP Inbound GET /api/docs
+ENTER    | 426d2dbcd44343ab8234b167334d9fdb | 2025-07-13 23:19:34.055 | backend.api.v2.middleware.logic:log_requests:16 - HTTP Inbound-V2 GET /api/docs
+EXIT     | 426d2dbcd44343ab8234b167334d9fdb | 2025-07-13 23:19:34.056 | backend.api.v2.middleware.logic:log_requests:31 - HTTP Outbound-V2 GET /api/docs | 200 0.001s
+END 200  | 426d2dbcd44343ab8234b167334d9fdb | 2025-07-13 23:19:34.057 | app:log_requests:50 - HTTP Outbound GET /api/docs | 200 0.003s
+START    | f48cff76c4a8436c8b4ff071566819ac | 2025-07-13 23:19:34.366 | app:log_requests:35 - HTTP Inbound GET /api/openapi.json
+ENTER    | f48cff76c4a8436c8b4ff071566819ac | 2025-07-13 23:19:34.368 | backend.api.v2.middleware.logic:log_requests:16 - HTTP Inbound-V2 GET /api/openapi.json
+EXIT     | f48cff76c4a8436c8b4ff071566819ac | 2025-07-13 23:19:34.371 | backend.api.v2.middleware.logic:log_requests:31 - HTTP Outbound-V2 GET /api/openapi.json | 200 0.003s
+END 200  | f48cff76c4a8436c8b4ff071566819ac | 2025-07-13 23:19:34.372 | app:log_requests:50 - HTTP Outbound GET /api/openapi.json | 200 0.005s
+START    | cf4e6186701e47f2a362ae682eae93f8 | 2025-07-13 23:19:37.796 | app:log_requests:35 - HTTP Inbound GET /api/about/
+ENTER    | cf4e6186701e47f2a362ae682eae93f8 | 2025-07-13 23:19:37.797 | backend.api.v2.middleware.logic:log_requests:16 - HTTP Inbound-V2 GET /api/about/
+DEBUG    | cf4e6186701e47f2a362ae682eae93f8 | 2025-07-13 23:19:37.798 | backend.api.v2.routers.about.endpoints:about:15 - About is called
+EXIT     | cf4e6186701e47f2a362ae682eae93f8 | 2025-07-13 23:19:37.800 | backend.api.v2.middleware.logic:log_requests:31 - HTTP Outbound-V2 GET /api/about/ | 200 0.002s
+END 200  | cf4e6186701e47f2a362ae682eae93f8 | 2025-07-13 23:19:37.801 | app:log_requests:50 - HTTP Outbound GET /api/about/ | 200 0.004s

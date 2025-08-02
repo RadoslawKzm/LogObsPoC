@@ -1,18 +1,18 @@
+import time
 import typing
 import uuid
-import time
-from loguru import logger
 from contextlib import asynccontextmanager
+
 import fastapi
-import env
-
-
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from loguru import logger
 
-from backend.api.loguru_logger.log_config import logger_setup
 from backend.api import v1_app, v2_app
+from backend.api.health_check import health_router
+from backend.loguru_logger.log_config import logger_setup
+from backend.config import settings
 
 
 @asynccontextmanager
@@ -79,9 +79,10 @@ _app.mount(path="/api/v1", app=v1_app)
 logger.info("V2 initializing...")
 _app.mount(path="/api/v2", app=v2_app)
 logger.info("LATEST initializing...")
+v2_app.include_router(health_router)
 _app.mount(path="/api", app=v2_app)
 logger.info("Application startup complete.")
-app_link:str = f"http://{env.APP_HOST}:{env.APP_PORT}/api{_app.docs_url}"
+app_link: str = f"http://{settings.APP_HOST}:{settings.APP_PORT}/api{_app.docs_url}"
 logger.info(f"Uvicorn running on {app_link} (Press CTRL+C to quit)")
 
 app = _app
@@ -90,7 +91,8 @@ app = _app
 # if __name__ == "__main__":
 #     """
 #     Necessary for pycharm debugging purposes.
-#     If we run your module imported by another (including gunicorn) using something like:
+#     If we run your module imported by another
+#       (including gunicorn) using something like:
 #     from manage import app then the value is 'app' or 'manage.app'
 #     """
 #     uvicorn.run(

@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import AsyncMock, patch
-from fastapi.testclient import TestClient
 
+import pytest
 from backend.api.v2.routers.db.endpoints import db_router
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 pytest_plugins = ["pytest_asyncio"]
 
@@ -23,7 +23,7 @@ def client(app):
 
 # --- Tests ---
 @patch(
-    "backend.api.database.PostgresImplementation.get_record",
+    "backend.database.PostgresImplementation.get_record",
     new_callable=AsyncMock,
 )
 @pytest.mark.asyncio
@@ -36,7 +36,7 @@ async def test_postgres_endpoint(mock_get_record, client, app):
 
 
 @patch(
-    "backend.api.database.MongoImplementation.get_many_records",
+    "backend.database.MongoImplementation.get_many_records",
     new_callable=AsyncMock,
 )
 @pytest.mark.asyncio

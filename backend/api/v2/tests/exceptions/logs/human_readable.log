@@ -1,0 +1,686 @@
+HTTPExc  | No correlation_id | 2025-08-02 10:57:47.190 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:59 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 10:57:47.191 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Request body: <starlette.requests.Request object at 0x112f9fed0>
+HTTPExc  | No correlation_id | 2025-08-02 10:57:47.192 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 10:57:47.192 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Manual http error
+HTTPExc  | No correlation_id | 2025-08-02 10:58:32.825 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:59 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 10:58:33.582 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Request body: <starlette.requests.Request object at 0x115e3c050>
+HTTPExc  | No correlation_id | 2025-08-02 10:59:40.329 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 10:59:40.332 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:00:15.913 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:59 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:00:16.515 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Request body: b''
+HTTPExc  | No correlation_id | 2025-08-02 11:00:24.396 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:00:24.397 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:26:23.834 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:57 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:26:23.835 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:58 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:26:23.835 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:59 - Detail: Internal Server Error. Our team is notified.
+WARNING  | No correlation_id | 2025-08-02 11:26:23.838 | backend.api.v2.exceptions.exception_handlers:log_traceback:25 - <class 'backend.api.v2.exceptions.api.ApiError'> is handled.
+WARNING  | No correlation_id | 2025-08-02 11:26:23.840 | backend.api.v2.exceptions.exception_handlers:log_traceback:26 - Internal message: Validation failed, Internal code: 1000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 29, in raise_api
+    raise api_exceptions.ApiError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.api.ApiError
+
+WARNING  | No correlation_id | 2025-08-02 11:26:23.841 | backend.api.v2.exceptions.exception_handlers:log_traceback:34 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:26:23.845 | backend.api.v2.exceptions.exception_handlers:log_traceback:25 - <class 'backend.api.v2.exceptions.db.DbError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:26:23.845 | backend.api.v2.exceptions.exception_handlers:log_traceback:26 - Internal message: DB timeout, Internal code: 2000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 35, in raise_db
+    raise db_exceptions.DbError(
+        internal_message="DB timeout",
+    )
+backend.api.v2.exceptions.db.DbError
+
+ERROR    | No correlation_id | 2025-08-02 11:26:23.847 | backend.api.v2.exceptions.exception_handlers:log_traceback:34 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:26:23.849 | backend.api.v2.exceptions.exception_handlers:log_traceback:25 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:26:23.850 | backend.api.v2.exceptions.exception_handlers:log_traceback:26 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 41, in raise_custom
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:26:23.851 | backend.api.v2.exceptions.exception_handlers:log_traceback:34 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:26:23.854 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:104 - Generic Exception is handled
+ERROR    | No correlation_id | 2025-08-02 11:26:23.856 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:105 - Unhandled Exception
+CRITICAL | No correlation_id | 2025-08-02 11:26:23.858 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:107 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:27:50.311 | backend.api.v2.exceptions.exception_handlers:log_traceback:25 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:27:50.316 | backend.api.v2.exceptions.exception_handlers:log_traceback:26 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 41, in raise_base
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:27:50.322 | backend.api.v2.exceptions.exception_handlers:log_traceback:34 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.898 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.899 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.899 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.902 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.api.ApiError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.904 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 1000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 32, in raise_api
+    raise api_exceptions.ApiError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.api.ApiError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.905 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.909 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.auth.AuthError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.909 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 5000, HTTP response code: 401, External message: You are not authorized., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 38, in raise_auth
+    raise auth_exceptions.AuthError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.auth.AuthError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:43:52.910 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: You are not authorized.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.937 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.core.CoreError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.938 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 4000, HTTP response code: 500, External message: Internal server error., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 44, in raise_core
+    raise core_exceptions.CoreError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.core.CoreError
+
+ERROR    | No correlation_id | 2025-08-02 11:43:52.939 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal server error.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.943 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.cloud.CloudError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.944 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 3000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 50, in raise_core
+    raise cloud_exceptions.CloudError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.cloud.CloudError
+
+ERROR    | No correlation_id | 2025-08-02 11:43:52.945 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.948 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.db.DbError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:43:52.949 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: DB timeout, Internal code: 2000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 56, in raise_db
+    raise db_exceptions.DbError(
+        internal_message="DB timeout",
+    )
+backend.api.v2.exceptions.db.DbError
+
+ERROR    | No correlation_id | 2025-08-02 11:43:52.950 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:43:52.953 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:43:52.954 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 62, in raise_base
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:43:52.956 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:43:52.959 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:140 - Generic Exception is handled
+ERROR    | No correlation_id | 2025-08-02 11:43:52.962 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:141 - Unhandled Exception
+CRITICAL | No correlation_id | 2025-08-02 11:43:52.964 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:143 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.184 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.184 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.184 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.189 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.api.ApiError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.191 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 1000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 32, in raise_api
+    raise api_exceptions.ApiError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.api.ApiError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.192 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.196 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.auth.AuthError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.197 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 5000, HTTP response code: 401, External message: You are not authorized., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 38, in raise_auth
+    raise auth_exceptions.AuthError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.auth.AuthError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:44:35.198 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: You are not authorized.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.226 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.core.CoreError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.227 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 4000, HTTP response code: 500, External message: Internal server error., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 44, in raise_core
+    raise core_exceptions.CoreError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.core.CoreError
+
+ERROR    | No correlation_id | 2025-08-02 11:44:35.228 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal server error.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.233 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.cloud.CloudError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.234 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 3000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 50, in raise_core
+    raise cloud_exceptions.CloudError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.cloud.CloudError
+
+ERROR    | No correlation_id | 2025-08-02 11:44:35.235 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.239 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.db.DbError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:44:35.240 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: DB timeout, Internal code: 2000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 56, in raise_db
+    raise db_exceptions.DbError(
+        internal_message="DB timeout",
+    )
+backend.api.v2.exceptions.db.DbError
+
+ERROR    | No correlation_id | 2025-08-02 11:44:35.241 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:44:35.244 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:44:35.245 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 62, in raise_base
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:44:35.246 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:44:35.249 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:140 - Generic Exception is handled
+ERROR    | No correlation_id | 2025-08-02 11:44:35.251 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:141 - Unhandled Exception
+CRITICAL | No correlation_id | 2025-08-02 11:44:35.253 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:143 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.553 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.553 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.553 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.561 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.api.ApiError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.563 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 1000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 32, in raise_api
+    raise api_exceptions.ApiError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.api.ApiError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.564 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.568 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.auth.AuthError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.569 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 5000, HTTP response code: 401, External message: You are not authorized., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 38, in raise_auth
+    raise auth_exceptions.AuthError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.auth.AuthError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:45:17.569 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: You are not authorized.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.572 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.core.CoreError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.573 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 4000, HTTP response code: 500, External message: Internal server error., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 44, in raise_core
+    raise core_exceptions.CoreError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.core.CoreError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:17.575 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal server error.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.602 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.cloud.CloudError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.603 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 3000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 50, in raise_core
+    raise cloud_exceptions.CloudError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.cloud.CloudError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:17.604 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.608 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.db.DbError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:17.609 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: DB timeout, Internal code: 2000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 56, in raise_db
+    raise db_exceptions.DbError(
+        internal_message="DB timeout",
+    )
+backend.api.v2.exceptions.db.DbError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:17.610 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:45:17.613 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:45:17.614 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 62, in raise_base
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:45:17.615 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:45:17.618 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:140 - Generic Exception is handled
+ERROR    | No correlation_id | 2025-08-02 11:45:17.620 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:141 - Unhandled Exception
+CRITICAL | No correlation_id | 2025-08-02 11:45:17.622 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:143 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.465 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:60 - Manual in-code exception was risen.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.466 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:61 - Status code: 500
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.466 | backend.api.v2.exceptions.exception_handlers:http_exception_handler:62 - Detail: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.470 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.api.ApiError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.472 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 1000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 32, in raise_api
+    raise api_exceptions.ApiError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.api.ApiError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.473 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.476 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.auth.AuthError'> is handled.
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.477 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 5000, HTTP response code: 401, External message: You are not authorized., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 38, in raise_auth
+    raise auth_exceptions.AuthError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.auth.AuthError
+
+HTTPExc  | No correlation_id | 2025-08-02 11:45:51.479 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: You are not authorized.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.481 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.core.CoreError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.482 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 4000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 44, in raise_core
+    raise core_exceptions.CoreError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.core.CoreError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:51.483 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.486 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.cloud.CloudError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.487 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Validation failed, Internal code: 3000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 50, in raise_core
+    raise cloud_exceptions.CloudError(
+        internal_message="Validation failed",
+    )
+backend.api.v2.exceptions.cloud.CloudError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:51.488 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.491 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.db.DbError'> is handled.
+ERROR    | No correlation_id | 2025-08-02 11:45:51.492 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: DB timeout, Internal code: 2000, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 56, in raise_db
+    raise db_exceptions.DbError(
+        internal_message="DB timeout",
+    )
+backend.api.v2.exceptions.db.DbError
+
+ERROR    | No correlation_id | 2025-08-02 11:45:51.494 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:45:51.497 | backend.api.v2.exceptions.exception_handlers:log_traceback:28 - <class 'backend.api.v2.exceptions.base.BaseCustomError'> is handled.
+CRITICAL | No correlation_id | 2025-08-02 11:45:51.498 | backend.api.v2.exceptions.exception_handlers:log_traceback:29 - Internal message: Invalid custom rule, Internal code: 500, HTTP response code: 500, External message: Internal Server Error. Our team is notified., Traceback: Traceback (most recent call last):
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/venv/lib/python3.13/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/rakuzma/PycharmProjects/LogObsPoC/backend/api/v2/tests/exceptions/test_exception_handlers.py", line 62, in raise_base
+    raise BaseCustomError(
+        internal_message="Invalid custom rule",
+    )
+backend.api.v2.exceptions.base.BaseCustomError
+
+CRITICAL | No correlation_id | 2025-08-02 11:45:51.499 | backend.api.v2.exceptions.exception_handlers:log_traceback:37 - Response: Internal Server Error. Our team is notified.
+CRITICAL | No correlation_id | 2025-08-02 11:45:51.502 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:140 - Generic Exception is handled
+ERROR    | No correlation_id | 2025-08-02 11:45:51.504 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:141 - Unhandled Exception
+CRITICAL | No correlation_id | 2025-08-02 11:45:51.507 | backend.api.v2.exceptions.exception_handlers:custom_generic_handler:143 - Response: Internal Server Error. Our team is notified.

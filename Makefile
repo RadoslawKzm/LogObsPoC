@@ -20,22 +20,7 @@
 PROJDIR := $(realpath $(CURDIR))
 #BUILDDIR := $(PROJDIR)/deployment
 
-.PHONY: format
-format:
-	@echo Sorting imports ...
-	@isort --settings-path=./backend/pyproject.toml --py 313 --virtual-env .venv ./backend/.
-	@echo Reformatting with Black ...
-	@black --config ./backend/pyproject.toml ./backend/
-	@echo Reformatting with Ruff ...
-	@ruff --config ./backend/pyproject.toml format ./backend/.
-	@echo Running Flake8 ...
-	@flake8 ./backend --config=./backend/pyproject.toml
-	@echo Finished :\)
-
-.PHONY: security-all
-security-all:
-	@bandit -c ./backend/pyproject.toml -r ./backend/.
-	@semgrep --config p/ci --include='*.py' --exclude='test_*.py'cd ..
+include backend/Makefile.lint
 
 
 .PHONY: up-dev

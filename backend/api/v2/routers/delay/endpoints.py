@@ -3,7 +3,7 @@ import asyncio
 import fastapi
 from loguru import logger
 
-from backend.api.loguru_logger import TimingContextManager
+from backend.loguru_logger import TimingContextManager
 
 delay_router = fastapi.APIRouter(
     prefix="/delay",

@@ -1,2 +1,2 @@
-from . about.endpoints import about_router
-from .healthcheck.endpoints import healthcheck_router
+from .about.endpoints import about_router as about
+from .health.endpoints import health_router as health

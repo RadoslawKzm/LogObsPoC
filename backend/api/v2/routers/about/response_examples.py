@@ -1,8 +1,8 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from fastapi import status
 
-response_200: Optional[Dict[Union[int, str], Dict[str, Any]]] = {
+response_200: dict[int | str, dict[str, Any]] | None = {
     "200": {
         "description": "Success",
         "content": {
