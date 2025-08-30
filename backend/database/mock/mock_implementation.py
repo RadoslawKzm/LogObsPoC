@@ -35,7 +35,7 @@ class MockImplementation(DatabaseInterface):
         Function name contains 'many' due to similarities with get_record.
         There is a risk of mistake while function call.
         """
-        logger.debug("Getting many records to Mock Database")
+        logger.debug("Getting many records from Mock Database")
         return list(books.values())
 
     async def add_record(self, record: typing.Any) -> str:

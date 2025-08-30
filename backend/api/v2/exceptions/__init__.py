@@ -1,10 +1,9 @@
-from . import api as api_exceptions
-from . import auth as auth_exceptions
-from . import base as base_exceptions
-from . import cloud as cloud_exceptions
-from . import core as core_exceptions
-from . import db as db_exceptions
-from .base import BaseCustomError
+from . import _1xxx_api as api_exceptions
+from . import _2xxx_db as db_exceptions
+from . import _3xxx_cloud as cloud_exceptions
+from . import _4xxx_core as core_exceptions
+from . import _5xxx_auth as auth_exceptions
+from ._0_500_base import BaseCustomError
 from .exception_handlers import add_exception_handlers
 
 __all__ = [

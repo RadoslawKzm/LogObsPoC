@@ -7,9 +7,11 @@ import uvicorn
 from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from backend.loguru_logger.log_config import logger_setup
+from backend.config import settings
 
 from . import routers
 from .exceptions import exception_handlers as exc
@@ -18,7 +20,7 @@ from .middleware import add_http_middleware
 
 @asynccontextmanager
 async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
-    logger_setup()
+    logger_setup(settings=settings)
     # PostgresSessionManager.init_db(database=databases["postgres"])
     # db_manager = PostgresSessionManager(database=databases["postgres"])
     func_app.requests_client = httpx.AsyncClient()
@@ -29,7 +31,11 @@ async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
     # await db_manager.close()
 
 
-_app = FastAPI(lifespan=lifespan, root_path="")
+_app = FastAPI(
+    lifespan=lifespan,
+    root_path="",
+    default_response_class=ORJSONResponse,
+)
 add_http_middleware(app=_app)
 
 _app.add_middleware(
@@ -51,10 +57,7 @@ _app.add_middleware(
 _app = exc.add_exception_handlers(app=_app)
 _app.include_router(router=routers.about)
 _app.include_router(router=routers.health)
-_app.include_router(router=routers.rbac)
-_app.include_router(router=routers.exceptions)
-_app.include_router(router=routers.db)
-_app.include_router(router=routers.delay)
+_app.include_router(router=routers.files_router)
 
 
 v2_app = _app

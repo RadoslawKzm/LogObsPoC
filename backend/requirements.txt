@@ -4,6 +4,7 @@ httpx
 uvicorn
 gunicorn
 pydantic-settings
+orjson
 
 
 # Database modules

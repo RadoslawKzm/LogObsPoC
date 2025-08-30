@@ -1,5 +1,5 @@
 import pytest
-from backend.api.v2.exceptions import (
+from backend.api.v1.exceptions import (
     BaseCustomError,
     add_exception_handlers,
     api_exceptions,

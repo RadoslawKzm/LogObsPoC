@@ -6,18 +6,17 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from backend.loguru_logger import safe_log
-
-from . import BaseCustomError
-from ._1xxx_api import ApiError
-from ._2xxx_db import DbError
-from ._3xxx_cloud import CloudError
-from ._4xxx_core import CoreError
-from ._5xxx_auth import AuthError
-
-
 if typing.TYPE_CHECKING:
     from loguru import Logger
+
+from backend.loguru_logger import safe_log
+
+from .api import ApiError
+from .auth import AuthError
+from .base import BaseCustomError
+from .cloud import CloudError
+from .core import CoreError
+from .db import DbError
 
 
 def log_traceback(
@@ -138,9 +137,8 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         request: Request,
         exc: Exception,
     ) -> JSONResponse:
-        logger.critical("Generic Exception is handled")
-        formatted_exc = safe_log("".join(traceback.format_exc()))
-        logger.opt(exception=exc).critical(f"Traceback: {formatted_exc}")
+        logger.opt(exception=exc).critical("Generic Exception is handled")
+        logger.exception(f"Unhandled Exception, {safe_log(exc)}")
         msg: str = "Internal Server Error. Our team is notified."
         logger.critical(f"Response: {msg}")
         return JSONResponse(

@@ -1,33 +1,64 @@
 import typing
+import uuid
 from contextlib import asynccontextmanager
 
+import httpx
 import uvicorn
+from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from backend.loguru_logger import logger_setup
+from backend.loguru_logger.log_config import logger_setup
+from backend.config import settings
 
 from . import routers
+from .exceptions import exception_handlers as exc
+from .middleware import add_http_middleware
 
 
 @asynccontextmanager
 async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
-    logger_setup()
+    logger_setup(settings=settings)
+    # PostgresSessionManager.init_db(database=databases["postgres"])
+    # db_manager = PostgresSessionManager(database=databases["postgres"])
+    func_app.requests_client = httpx.AsyncClient()
     yield
+    await func_app.requests_client.aclose()
+    # if db_manager.engine is not None:
+    # Close the DB connection
+    # await db_manager.close()
 
 
 _app = FastAPI(lifespan=lifespan, root_path="")
-_app.include_router(routers.about)
-_app.include_router(routers.health)
+add_http_middleware(app=_app)
+
+_app.add_middleware(
+    CorrelationIdMiddleware,
+    header_name="X-Request-ID",
+    update_request_header=True,
+    generator=lambda: uuid.uuid4().hex,
+)
+
+_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["X-Requested-With", "X-Request-ID"],
+    expose_headers=["X-Request-ID"],
+)
+
+_app = exc.add_exception_handlers(app=_app)
+_app.include_router(router=routers.about)
+_app.include_router(router=routers.health)
+_app.include_router(router=routers.rbac)
+_app.include_router(router=routers.exceptions)
+_app.include_router(router=routers.db)
+_app.include_router(router=routers.delay)
 
 
 v1_app = _app
-
-
-"""Didnt do a @app.on_event("startup") decorator.
-Sub apps don't invoke startup event handlers, just main app.
-https://github.com/tiangolo/fastapi/pull/1554
-Lifespan does not work either."""
 
 
 if __name__ == "__main__":

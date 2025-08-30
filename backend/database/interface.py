@@ -4,23 +4,27 @@ import abc
 import typing
 from collections.abc import AsyncGenerator, Callable
 from typing import ClassVar, Literal, overload
+from backend.database.models import FlowControl
 
 if typing.TYPE_CHECKING:
     from backend.database import (
         MockImplementation,
         MongoImplementation,
         PostgresImplementation,
+        FileStorageImplementation,
     )
 
     _ = PostgresImplementation
     _ = MongoImplementation
     _ = MockImplementation
+    _ = FileStorageImplementation
 
 
 ABC_TYPE = Callable[..., AsyncGenerator["DatabaseInterface"]]
 PG_TYPE = Callable[..., AsyncGenerator["PostgresImplementation"]]
 MONGO_TYPE = Callable[..., AsyncGenerator["MongoImplementation"]]
 MOCK_TYPE = Callable[..., AsyncGenerator["MockImplementation"]]
+FS_TYPE = Callable[..., AsyncGenerator["FileStorageImplementation"]]
 
 
 class DatabaseInterface(abc.ABC):
@@ -57,6 +61,10 @@ class DatabaseInterface(abc.ABC):
     @overload
     def get_db_impl(*, db_name: Literal["Mock"]) -> MOCK_TYPE: ...
 
+    @staticmethod
+    @overload
+    def get_db_impl(*, db_name: Literal["FileStorage"]) -> FS_TYPE: ...
+
     @classmethod
     def get_db_impl(cls, *, db_name: str) -> ABC_TYPE:
         async def get_db() -> AsyncGenerator[DatabaseInterface]:
@@ -67,11 +75,19 @@ class DatabaseInterface(abc.ABC):
         return get_db
 
     @abc.abstractmethod
-    def get_record(self, *args, **kwargs):
+    def get_record(
+        self,
+        record: typing.Any,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ) -> typing.Any:
         pass
 
     @abc.abstractmethod
-    def get_many_records(self) -> list:
+    def get_many_records(
+        self,
+        records: typing.Any,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ) -> list:
         """Need to be separate from get_record.
         Some databases offer bulk operations.
         If db supports bulk get, please implement.
@@ -81,11 +97,31 @@ class DatabaseInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def add_record(self, record: typing.Any):
+    def list_records(
+        self,
+        start: int,
+        size: int,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ) -> typing.List[typing.Any]:
+        """Implement function that returns all available records.
+        Implement simple pagination with start pointer and size.
+        """
         pass
 
     @abc.abstractmethod
-    def add_many_records(self, records: list[typing.Any]):
+    def add_record(
+        self,
+        record: typing.Any,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
+        pass
+
+    @abc.abstractmethod
+    def add_many_records(
+        self,
+        records: list[typing.Any],
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -95,11 +131,19 @@ class DatabaseInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def update_record(self, record: typing.Any):
+    def update_record(
+        self,
+        record: typing.Any,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
         pass
 
     @abc.abstractmethod
-    def update_many_records(self, records: list[typing.Any]):
+    def update_many_records(
+        self,
+        records: list[typing.Any],
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -109,11 +153,19 @@ class DatabaseInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def delete_record(self, record: typing.Any):
+    def delete_record(
+        self,
+        record: typing.Any,
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
         pass
 
     @abc.abstractmethod
-    def delete_many_records(self, records: list[typing.Any]):
+    def delete_many_records(
+        self,
+        records: list[typing.Any],
+        flow_control: FlowControl = FlowControl.BOOL,
+    ):
         """Need to be separate from delete_record.
         Some databases offer bulk operations.
         If db supports bulk delete, please implement.

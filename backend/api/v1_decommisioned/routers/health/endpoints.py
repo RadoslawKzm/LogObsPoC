@@ -1,16 +1,16 @@
 import random
 
-import fastapi
+from fastapi import APIRouter
 
-from . import response_examples
+from backend.api.v1.routers.health import response_examples
 
-health_router = fastapi.APIRouter(prefix="/health", tags=["health"])
+health_router = APIRouter(prefix="/health", tags=["health"])
 
 
 @health_router.get(
     "/",
     status_code=200,
-    responses=response_examples.response_200,
+    responses=response_examples.health,
 )
 async def health() -> dict:
     responses = [

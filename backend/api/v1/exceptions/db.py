@@ -1,6 +1,6 @@
 import fastapi
 
-from backend.api.v2.exceptions.base import BaseCustomError
+from backend.api.v2.exceptions._0_500_base import BaseCustomError
 
 
 class DbError(BaseCustomError):
