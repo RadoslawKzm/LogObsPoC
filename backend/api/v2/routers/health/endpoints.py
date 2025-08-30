@@ -4,7 +4,7 @@ import fastapi
 
 from . import response_examples
 
-health_router = fastapi.APIRouter(prefix="/health", tags=["health"])
+health_router = fastapi.APIRouter(prefix="/health", tags=["Health"])
 
 
 @health_router.get(

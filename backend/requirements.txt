@@ -5,6 +5,7 @@ uvicorn
 gunicorn
 pydantic-settings
 orjson
+python-multipart
 
 
 # Database modules

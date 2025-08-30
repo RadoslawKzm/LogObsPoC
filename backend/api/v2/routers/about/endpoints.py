@@ -3,7 +3,7 @@ from loguru import logger
 
 from . import response_examples
 
-about_router = fastapi.APIRouter(prefix="/about", tags=["about"])
+about_router = fastapi.APIRouter(prefix="/about", tags=["About"])
 
 
 @about_router.get(

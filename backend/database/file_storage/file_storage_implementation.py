@@ -1,6 +1,4 @@
 import pathlib
-from enum import StrEnum
-
 from loguru import logger
 
 from backend.api.v2.exceptions import db_exceptions
@@ -12,8 +10,8 @@ from .models import Record
 CURRENT_FILE = pathlib.Path(__file__).parent
 DATA_FOLDER = CURRENT_FILE / "data"
 DATA_FOLDER.mkdir(exist_ok=True)
-FILENAME = str
-CONTENT = str
+FILE_NAME = str
+CONTENT = bytes
 
 
 def _get_file_path(
@@ -54,7 +52,7 @@ class FileStorageImplementation(DatabaseInterface):
 
     async def get_record(
         self,
-        record: Record,
+        record: FILE_NAME,
         flow_control: FlowControl = FlowControl.BOOL,
     ) -> Record:
         """Read the content of a file.
@@ -72,28 +70,28 @@ class FileStorageImplementation(DatabaseInterface):
         """
         logger.opt(lazy=True).debug(
             "Getting file: {f_name} from File Storage",
-            f_name=lambda: record.filename,
+            f_name=lambda: record,
         )
         path: pathlib.Path | None = _get_file_path(
-            filename=str(record.filename),
+            filename=record,
             flow_control=flow_control,
         )
         if not path:
             logger.opt(lazy=True).debug(
                 "Cannot get file:{f_name}",
-                f_name=lambda: record.filename,
+                f_name=lambda: record,
             )
-            return Record(filename=record.filename, content=False)
+            return Record(filename=record, content=False)
         return Record(
-            filename=record.filename,
-            content=path.read_text(encoding="utf-8"),
+            filename=record,
+            content=path.read_bytes(),
         )
 
     async def get_many_records(
         self,
-        records: list[Record],
+        records: list[FILE_NAME],
         flow_control: FlowControl = FlowControl.BOOL,
-    ) -> dict[FILENAME, CONTENT]:
+    ) -> dict[FILE_NAME, CONTENT]:
         """Reads the contents of a multiple files.
 
         Args:
@@ -119,14 +117,15 @@ class FileStorageImplementation(DatabaseInterface):
 
     async def list_records(
         self,
+        *,
         start: int = 0,
         size: int = 100,
         flow_control: FlowControl = FlowControl.BOOL,
-    ) -> dict[FILENAME, CONTENT]:
+    ) -> list[FILE_NAME]:
         """Returns all files in the data folder.
 
         Returns:
-            dict[FILENAME, Record]: Dict of filenames with contents
+            dict[FILE_NAME, Record]: Dict of filenames with contents
                                             present in data folder.
         """
         logger.opt(lazy=True).debug(
@@ -135,19 +134,12 @@ class FileStorageImplementation(DatabaseInterface):
             start=lambda: start,
             size=lambda: size,
         )
-        files: dict[FILENAME, CONTENT] = {}
+        files: list[FILE_NAME] = []
         for file in DATA_FOLDER.iterdir():
             if not file.is_file():
                 continue
-            result: Record = await self.get_record(
-                record=Record(filename=file.name),
-                flow_control=flow_control,
-            )
-            files[result.filename] = result.content
-        return {
-            k: v for k, v in list(sorted(files.items()))[start : start + size]
-        }
-
+            files.append(file.name)
+        return sorted(files, key=lambda f: f.lower())
     async def add_record(
         self,
         record: Record,
@@ -190,7 +182,7 @@ class FileStorageImplementation(DatabaseInterface):
                 flow_control=lambda: flow_control,
             )
             return Record(filename=record.filename, content=False)
-        path.write_text(record.content, encoding="utf-8")
+        path.write_bytes(record.content)
         logger.opt(lazy=True).debug(
             "Added file:{f_name} to File Storage",
             f_name=lambda: record.filename,
@@ -202,7 +194,7 @@ class FileStorageImplementation(DatabaseInterface):
         records: list[Record],
         overwrite: bool = False,
         flow_control: FlowControl = FlowControl.BOOL,
-    ) -> dict[FILENAME, bool]:
+    ) -> dict[FILE_NAME, bool]:
         """Creates a new files with the given contents. Does not overwrite.
         Overwrite can be set to True.
 
@@ -222,7 +214,7 @@ class FileStorageImplementation(DatabaseInterface):
                                     flow_control == FlowControl.EXCEPTIONS
         """
         logger.debug("Adding many files to File Storage")
-        results: dict[FILENAME, bool] = {}
+        results: dict[FILE_NAME, bool] = {}
         for record in records:
             result: Record = await self.add_record(
                 record=record,
@@ -272,7 +264,7 @@ class FileStorageImplementation(DatabaseInterface):
             )
             return Record(filename=record.filename, content=False)
         if not append:
-            path.write_text(record.content, encoding="utf-8")
+            path.write_bytes(record.content)
             return Record(filename=record.filename, content=True)
         with path.open(mode="a", encoding="utf-8") as file:
             file.write(record.content)
@@ -283,13 +275,13 @@ class FileStorageImplementation(DatabaseInterface):
         records: list[Record],
         append: bool = True,
         flow_control: FlowControl = FlowControl.BOOL,
-    ) -> dict[FILENAME, bool]:
+    ) -> dict[FILE_NAME, bool]:
         """Update the contents of an existing files.
         By default, appends contents to the files.
         If append=False, the file is overwritten.
 
         Args:
-            records (dict[FILENAME, bool]): List of updated files.
+            records (dict[FILE_NAME, bool]): List of updated files.
             append (bool, optional): If to append to the file. Defaults to True
             flow_control (FlowControl, optional): Raises exc or returns BOOL
         Returns:
@@ -301,7 +293,7 @@ class FileStorageImplementation(DatabaseInterface):
                                         flow_control == FlowControl.EXCEPTIONS
         """
         logger.debug("Updating many files in File Storage")
-        results: dict[FILENAME, bool] = {}
+        results: dict[FILE_NAME, bool] = {}
         for record in records:
             result: Record = await self.update_record(
                 record=record,
@@ -313,7 +305,7 @@ class FileStorageImplementation(DatabaseInterface):
 
     async def delete_record(
         self,
-        record: Record,
+        record: FILE_NAME,
         flow_control: FlowControl = FlowControl.BOOL,
     ) -> Record:
         """Deletes a file.
@@ -333,27 +325,27 @@ class FileStorageImplementation(DatabaseInterface):
         """
         logger.opt(lazy=True).debug(
             "Deleting {f_name} from File Storage",
-            f_name=lambda: record.filename,
+            f_name=lambda: record,
         )
         path: pathlib.Path = _get_file_path(
-            filename=record.filename,
+            filename=record,
             flow_control=flow_control,
         )
         # Don't need to check for flow_control.
         if not path:  # If true, code would raise above already :)
             logger.opt(lazy=True).debug(
                 "Cannot delete file:{f_name}",
-                f_name=lambda: record.filename,
+                f_name=lambda: record,
             )
-            return Record(filename=record.filename, content=False)
+            return Record(filename=record, content=False)
         path.unlink()
-        return Record(filename=record.filename, content=True)
+        return Record(filename=record, content=True)
 
     async def delete_many_records(
         self,
-        records: list[Record],
+        records: list[FILE_NAME],
         flow_control: FlowControl = FlowControl.BOOL,
-    ) -> dict[FILENAME, bool]:
+    ) -> dict[FILE_NAME, bool]:
         """Deletes multiple files.
 
         Args:
@@ -370,7 +362,7 @@ class FileStorageImplementation(DatabaseInterface):
                                         flow_control == FlowControl.EXCEPTIONS
         """
         logger.debug("Deleting many files in File Storage")
-        results: dict[FILENAME, bool] = {}
+        results: dict[FILE_NAME, bool] = {}
         for record in records:
             result: Record = await self.delete_record(
                 record=record,
