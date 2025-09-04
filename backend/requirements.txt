@@ -9,6 +9,7 @@ python-multipart
 
 
 # Database modules
+sqlmodel
 sqlalchemy
 sqlalchemy_utils
 asyncpg

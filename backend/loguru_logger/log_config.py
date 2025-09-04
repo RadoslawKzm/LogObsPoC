@@ -8,28 +8,7 @@ from loguru import logger
 
 
 # -- Filters & formats --
-def safe_log(obj: str | dict) -> str:
-    """Parsing dictionaries to avoid loguru key errors.
-    When putting dict as lambda in lazy log,
-    Loguru tends to unpack it and get provided dictionary as keys.
-    This leads to keyerror in loguru.
-    Adding parenthesis fixes problem.
-    """
-    if not isinstance(obj, (str | dict)):
-        try:
-            obj = str(obj)
-        except Exception:
-            logger.critical(
-                f"LOGURU EXCEPTION: safe_log parsing!!! {traceback.format_exc()}"
-            )
-    if isinstance(obj, dict):
-        try:
-            obj = json.dumps(obj, default=str)
-        except Exception:
-            logger.critical(
-                f"LOGURU EXCEPTION: safe_log parsing!!! {traceback.format_exc()}"
-            )
-    return obj.replace("{", "{{").replace("}", "}}")
+
 
 
 def correlation_id_filter(record: dict) -> bool:
@@ -89,42 +68,42 @@ def setup_file_human_logger(settings: pydantic_settings.BaseSettings):
         format=human_readable_format,
         filter=correlation_id_filter,
         rotation="2 hours",
-        retention="2 hours",
+        # retention="2 hours",
         enqueue=True,
         backtrace=False,
         diagnose=True,
         serialize=False,
     )
 
-
-def setup_safe_json_logger(settings: pydantic_settings.BaseSettings):
-    logger.add(
-        "logs/safe.json",
-        level=settings.LOG_LEVEL,
-        format="{message}",
-        filter=correlation_id_filter,
-        rotation="1 hour",
-        retention="7 days",
-        enqueue=True,
-        backtrace=False,
-        diagnose=False,
-        serialize=True,
-    )
-
-
-def setup_unsafe_json_logger(settings: pydantic_settings.BaseSettings):
-    logger.add(
-        "logs/unsafe.json",
-        level=settings.LOG_LEVEL,
-        format="{message}",
-        filter=correlation_id_filter,
-        rotation="1 hour",
-        retention="1 day",
-        enqueue=True,
-        backtrace=False,
-        diagnose=True,
-        serialize=True,
-    )
+#
+# def setup_safe_json_logger(settings: pydantic_settings.BaseSettings):
+#     logger.add(
+#         "logs/safe.json",
+#         level=settings.LOG_LEVEL,
+#         format="{message}",
+#         filter=correlation_id_filter,
+#         rotation="1 hour",
+#         retention="7 days",
+#         enqueue=True,
+#         backtrace=False,
+#         diagnose=False,
+#         serialize=True,
+#     )
+#
+#
+# def setup_unsafe_json_logger(settings: pydantic_settings.BaseSettings):
+#     logger.add(
+#         "logs/unsafe.json",
+#         level=settings.LOG_LEVEL,
+#         format="{message}",
+#         filter=correlation_id_filter,
+#         rotation="1 hour",
+#         retention="1 day",
+#         enqueue=True,
+#         backtrace=False,
+#         diagnose=True,
+#         serialize=True,
+#     )
 
 
 # -- Custom Levels --
@@ -165,8 +144,8 @@ def logger_setup(settings: pydantic_settings.BaseSettings):
 
     setup_console_human_logger(settings)
     setup_file_human_logger(settings)
-    setup_safe_json_logger(settings)
-    setup_unsafe_json_logger(settings)
+    # setup_safe_json_logger(settings)
+    # setup_unsafe_json_logger(settings)
 
 
 # -- Log level docs for reference (optional) --
