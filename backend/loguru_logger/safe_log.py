@@ -1,5 +1,5 @@
 from loguru import logger
-import orjson
+import json
 import traceback
 
 
@@ -21,7 +21,7 @@ def safe_log(obj: str | dict) -> str:
             raise
     if isinstance(obj, dict):
         try:
-            obj = orjson.dumps(obj, default=str)
+            obj = json.dumps(obj, default=str)
         except Exception:
             logger.critical(
                 f"LOGURU EXCEPTION: safe_log parsing!!! "
