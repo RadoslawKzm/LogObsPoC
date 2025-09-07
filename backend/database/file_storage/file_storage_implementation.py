@@ -1,10 +1,11 @@
 import pathlib
+import typing
+
 from loguru import logger
 
-from backend.api.v2.exceptions import db_exceptions
+from backend.exceptions import db_exceptions
 from backend.database.interface import DatabaseInterface
 from backend.database.file_storage import FileStorageSessionManager
-from backend.database.models import FlowControl
 from .models import Record
 
 CURRENT_FILE = pathlib.Path(__file__).parent
@@ -16,8 +17,7 @@ CONTENT = bytes
 
 def _get_file_path(
     *,
-    filename: str,
-    flow_control: FlowControl = FlowControl.BOOL,
+    filename: str
 ) -> pathlib.Path | bool:
     """Get the full path of a file in the data folder.
 
@@ -33,13 +33,7 @@ def _get_file_path(
     """
     path = DATA_FOLDER / filename
     if not path.exists():
-        if flow_control == FlowControl.BOOL:
-            return False
-        msg: str = f"No filename: {filename} found"
-        raise db_exceptions.file_storage.FileNotFound(
-            internal_message=msg,
-            external_message=msg,
-        )
+        return False
     return path
 
 
@@ -53,7 +47,7 @@ class FileStorageImplementation(DatabaseInterface):
     async def get_record(
         self,
         record: FILE_NAME,
-        flow_control: FlowControl = FlowControl.BOOL,
+        table: typing.Any = None,
     ) -> Record:
         """Read the content of a file.
 
@@ -74,7 +68,6 @@ class FileStorageImplementation(DatabaseInterface):
         )
         path: pathlib.Path | None = _get_file_path(
             filename=record,
-            flow_control=flow_control,
         )
         if not path:
             logger.opt(lazy=True).debug(
@@ -90,7 +83,6 @@ class FileStorageImplementation(DatabaseInterface):
     async def get_many_records(
         self,
         records: list[FILE_NAME],
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> dict[FILE_NAME, CONTENT]:
         """Reads the contents of a multiple files.
 
@@ -110,7 +102,7 @@ class FileStorageImplementation(DatabaseInterface):
         for record in records:
             result: Record = await self.get_record(
                 record=record,
-                flow_control=flow_control,
+
             )
             results[result.filename] = result.content
         return results
@@ -120,7 +112,6 @@ class FileStorageImplementation(DatabaseInterface):
         *,
         start: int = 0,
         size: int = 100,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> list[FILE_NAME]:
         """Returns all files in the data folder.
 
@@ -140,11 +131,11 @@ class FileStorageImplementation(DatabaseInterface):
                 continue
             files.append(file.name)
         return sorted(files, key=lambda f: f.lower())
+
     async def add_record(
         self,
         record: Record,
         overwrite: bool = False,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> Record:
         """Create a new file with the given content. Overwrites OFF by default.
 
@@ -173,14 +164,6 @@ class FileStorageImplementation(DatabaseInterface):
                 "Unable to create file:{f_name}, already exists in FS",
                 f_name=lambda: record.filename,
             )
-            if flow_control == FlowControl.EXCEPTIONS:
-                raise db_exceptions.file_storage.FileAlreadyExists(
-                    f"File '{record.filename}' exist and {overwrite=}"
-                )
-            logger.opt(lazy=True).debug(
-                "Returning record=False due to flow_control:{flow_control}",
-                flow_control=lambda: flow_control,
-            )
             return Record(filename=record.filename, content=False)
         path.write_bytes(record.content)
         logger.opt(lazy=True).debug(
@@ -193,7 +176,6 @@ class FileStorageImplementation(DatabaseInterface):
         self,
         records: list[Record],
         overwrite: bool = False,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> dict[FILE_NAME, bool]:
         """Creates a new files with the given contents. Does not overwrite.
         Overwrite can be set to True.
@@ -219,7 +201,7 @@ class FileStorageImplementation(DatabaseInterface):
             result: Record = await self.add_record(
                 record=record,
                 overwrite=overwrite,
-                flow_control=flow_control,
+
             )
             results[record.filename] = result.content
         return results
@@ -228,7 +210,6 @@ class FileStorageImplementation(DatabaseInterface):
         self,
         record: Record,
         append: bool = True,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> Record:
         """Update the content of an existing file.
         By default, appends content to the file.
@@ -254,7 +235,6 @@ class FileStorageImplementation(DatabaseInterface):
         )
         path: pathlib.Path = _get_file_path(
             filename=record.filename,
-            flow_control=flow_control,
         )
         # Don't need to check for flow_control.
         if not path:  # If true, code would raise above already :)
@@ -274,7 +254,6 @@ class FileStorageImplementation(DatabaseInterface):
         self,
         records: list[Record],
         append: bool = True,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> dict[FILE_NAME, bool]:
         """Update the contents of an existing files.
         By default, appends contents to the files.
@@ -298,7 +277,7 @@ class FileStorageImplementation(DatabaseInterface):
             result: Record = await self.update_record(
                 record=record,
                 append=append,
-                flow_control=flow_control,
+
             )
             results[result.filename] = result.content
         return results
@@ -306,7 +285,6 @@ class FileStorageImplementation(DatabaseInterface):
     async def delete_record(
         self,
         record: FILE_NAME,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> Record:
         """Deletes a file.
 
@@ -329,7 +307,6 @@ class FileStorageImplementation(DatabaseInterface):
         )
         path: pathlib.Path = _get_file_path(
             filename=record,
-            flow_control=flow_control,
         )
         # Don't need to check for flow_control.
         if not path:  # If true, code would raise above already :)
@@ -344,7 +321,6 @@ class FileStorageImplementation(DatabaseInterface):
     async def delete_many_records(
         self,
         records: list[FILE_NAME],
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> dict[FILE_NAME, bool]:
         """Deletes multiple files.
 
@@ -366,7 +342,7 @@ class FileStorageImplementation(DatabaseInterface):
         for record in records:
             result: Record = await self.delete_record(
                 record=record,
-                flow_control=flow_control,
+
             )
             results[result.filename] = result.content
         return results

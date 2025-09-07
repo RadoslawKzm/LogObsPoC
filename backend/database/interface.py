@@ -4,7 +4,10 @@ import abc
 import typing
 from collections.abc import AsyncGenerator, Callable
 from typing import ClassVar, Literal, overload
-from backend.database.models import FlowControl
+from sqlmodel import SQLModel
+
+import fastapi
+import pydantic
 
 if typing.TYPE_CHECKING:
     from backend.database import (
@@ -31,6 +34,7 @@ class DatabaseInterface(abc.ABC):
     database_name: str
     session_factory = None
     _registry: ClassVar[dict[str, type[DatabaseInterface]]] = {}
+    sessions = {}
     """This is ABC class with registry pattern implementation.
     To use in code:
     `DatabaseInterface["SQL"].add_record(record="test")`
@@ -44,6 +48,13 @@ class DatabaseInterface(abc.ABC):
         if "session_factory" not in cls.__dict__:
             raise NotImplementedError(f"'session_factory' {msg}")
         cls._registry[cls.database_name.lower()] = cls
+        cls.init_db()
+        cls.sessions[cls.database_name.lower()] = typing.Annotated[
+            f"{cls.database_name}Implementation",
+            fastapi.Depends(
+                DatabaseInterface.get_db_impl(db_name=cls.database_name)
+            ),
+        ]
 
     @abc.abstractmethod
     def __init__(self, *args, session, **kwargs) -> None:
@@ -69,24 +80,38 @@ class DatabaseInterface(abc.ABC):
     def get_db_impl(cls, *, db_name: str) -> ABC_TYPE:
         async def get_db() -> AsyncGenerator[DatabaseInterface]:
             db = cls._registry[db_name.lower()]
-            async with db.session_factory as session:
+            async with db.session_factory() as session:
                 yield db(session=session)
 
         return get_db
 
+    @classmethod
+    def get_session(cls, *, db_name: str) -> ABC_TYPE:
+        return cls.sessions[db_name.lower()]
+
+    @classmethod
+    def init_db(cls):
+        """
+        Initialize database:
+        - Create all tables/collections defined if they don't exist.
+        - If not applicable don't create implementation for init_db.
+        """
+        pass
+
     @abc.abstractmethod
     def get_record(
         self,
-        record: typing.Any,
-        flow_control: FlowControl = FlowControl.BOOL,
-    ) -> typing.Any:
+        key: str,
+        value: str,
+        place: typing.Any = None,
+    ) -> SQLModel | False:
         pass
 
     @abc.abstractmethod
     def get_many_records(
         self,
         records: typing.Any,
-        flow_control: FlowControl = FlowControl.BOOL,
+        table: typing.Any = None,
     ) -> list:
         """Need to be separate from get_record.
         Some databases offer bulk operations.
@@ -101,7 +126,6 @@ class DatabaseInterface(abc.ABC):
         self,
         start: int,
         size: int,
-        flow_control: FlowControl = FlowControl.BOOL,
     ) -> typing.List[typing.Any]:
         """Implement function that returns all available records.
         Implement simple pagination with start pointer and size.
@@ -111,16 +135,15 @@ class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
     def add_record(
         self,
-        record: typing.Any,
-        flow_control: FlowControl = FlowControl.BOOL,
-    ):
+        body: typing.Any,
+        place: typing.Any,
+    ) -> SQLModel | False:
         pass
 
     @abc.abstractmethod
     def add_many_records(
         self,
         records: list[typing.Any],
-        flow_control: FlowControl = FlowControl.BOOL,
     ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
@@ -134,7 +157,6 @@ class DatabaseInterface(abc.ABC):
     def update_record(
         self,
         record: typing.Any,
-        flow_control: FlowControl = FlowControl.BOOL,
     ):
         pass
 
@@ -142,7 +164,6 @@ class DatabaseInterface(abc.ABC):
     def update_many_records(
         self,
         records: list[typing.Any],
-        flow_control: FlowControl = FlowControl.BOOL,
     ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
@@ -156,7 +177,6 @@ class DatabaseInterface(abc.ABC):
     def delete_record(
         self,
         record: typing.Any,
-        flow_control: FlowControl = FlowControl.BOOL,
     ):
         pass
 
@@ -164,7 +184,6 @@ class DatabaseInterface(abc.ABC):
     def delete_many_records(
         self,
         records: list[typing.Any],
-        flow_control: FlowControl = FlowControl.BOOL,
     ):
         """Need to be separate from delete_record.
         Some databases offer bulk operations.

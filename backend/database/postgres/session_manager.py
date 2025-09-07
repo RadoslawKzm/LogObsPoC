@@ -1,23 +1,15 @@
-import sqlalchemy.exc
 from loguru import logger
-from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
-    AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
-from sqlalchemy_utils import create_database, database_exists
-from sqlmodel import SQLModel
-
-from backend.api.v2.exceptions import db_exceptions
-from backend.database.config import Database, databases
+from backend.exceptions import db_exceptions
+from backend.database.config import pg_config
 from backend.database.postgres.session_measurement import (
     InstrumentedAsyncSession,
 )
-
-Base = declarative_base()
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 
 class PostgresSessionManager:
@@ -35,20 +27,12 @@ class PostgresSessionManager:
     def __init__(
         self,
         *args,
-        database=None,
         suppress_exc: bool = False,
         **kwargs,
     ) -> None:
         logger.debug("Initializing Postgres session manager")
-        self.database = database
-        db_opt = databases["postgres"]
-        db_url: str = (
-            f"{db_opt.async_driver}://"
-            f"{db_opt.user}:{db_opt.password}@"
-            f"{db_opt.hostname}:{db_opt.port}/{db_opt.db_name}"
-        )
         self.engine: AsyncEngine = create_async_engine(
-            url=db_url,
+            url=pg_config.async_url,
             pool_size=50,
             max_overflow=20,
         )
@@ -62,39 +46,6 @@ class PostgresSessionManager:
             **kwargs,
         )
 
-    @classmethod
-    def init_db(cls, database: Database) -> None:
-        engine = create_engine(
-            database.sync_conn_string,
-        )
-        # from sqlalchemy_utils import drop_database
-        # if database_exists(engine.url):
-        #     drop_database(engine.url)
-        if not database_exists(engine.url):
-            create_database(engine.url)
-        SQLModel.metadata.create_all(engine)
-
-    # async def create_and_populate_mock_db(self):
-    #     create_table_sql = """
-    #     CREATE TABLE IF NOT EXISTS users (
-    #         id SERIAL PRIMARY KEY,
-    #         username VARCHAR(50) UNIQUE NOT NULL,
-    #         email VARCHAR(255) UNIQUE NOT NULL
-    #     );
-    #     """
-    #
-    #     insert_sql = """
-    #     INSERT INTO users (username, email) VALUES
-    #         ('alice', 'alice@example.com'),
-    #         ('bob', 'bob@example.com')
-    #     ON CONFLICT (username) DO NOTHING;
-    #     """
-    #
-    #     async with self.session as session:
-    #         await session.execute(text(create_table_sql))
-    #         await session.execute(text(insert_sql))
-    #         await session.commit()
-
     async def __aenter__(self) -> AsyncSession:
         """
         :return: SQLAlchemy session object for context manager to operate on.
@@ -106,11 +57,8 @@ class PostgresSessionManager:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         logger.debug("Postgres session manager __aexit__")
         if any((exc_type, exc_val, exc_tb)):
-            if isinstance(exc_val, db_exceptions.ManualDbError):
+            if isinstance(exc_val, db_exceptions.sql.FlowControlError):
                 # Forwarding dev control flow exceptions giving HTTP4xx
-                raise exc_val
-            if not isinstance(exc_val, sqlalchemy.exc.SQLAlchemyError):
-                # Forwarding any non DB exception
                 raise exc_val
             logger.opt(exception=exc_val).error("Error in DB session occurred")
             logger.debug("Rolling back session")
@@ -125,7 +73,7 @@ class PostgresSessionManager:
                     x=lambda: self.suppress_exc,
                 )
                 return self.suppress_exc  # gracefully suppressing if True
-            raise db_exceptions.UnexpectedError from exc_val
+            raise db_exceptions.sql.SQLError from exc_val
 
         try:
             await self.session.commit()
@@ -140,10 +88,3 @@ class PostgresSessionManager:
 
     async def close(self):
         await self.engine.dispose()
-
-    @classmethod
-    async def get_session(cls):
-        if cls._instance is None:
-            raise RuntimeError("PostgresSessionManager is not initialized")
-        async with cls._instance as session:
-            yield session

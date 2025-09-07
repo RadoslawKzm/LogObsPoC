@@ -1,7 +1,7 @@
 import fastapi
 from loguru import logger
 
-from ...exceptions import (
+from backend.exceptions import (
     api_exceptions,
     auth_exceptions,
     core_exceptions,

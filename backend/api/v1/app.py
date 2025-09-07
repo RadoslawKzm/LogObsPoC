@@ -13,8 +13,7 @@ from backend.loguru_logger.log_config import logger_setup
 from backend.config import settings
 
 from . import routers
-from .exceptions import exception_handlers as exc
-from .middleware import add_http_middleware
+from backend.exceptions import exception_handlers as exc
 
 
 @asynccontextmanager
@@ -31,7 +30,7 @@ async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
 
 
 _app = FastAPI(lifespan=lifespan, root_path="")
-add_http_middleware(app=_app)
+
 
 _app.add_middleware(
     CorrelationIdMiddleware,
@@ -59,6 +58,10 @@ _app.include_router(router=routers.delay)
 
 
 v1_app = _app
+logger.info(
+    f"V1 link: "
+    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api/v1{v1_app.docs_url}"
+)
 
 
 if __name__ == "__main__":

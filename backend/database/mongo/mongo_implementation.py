@@ -8,7 +8,7 @@ from backend.database.mongo import MongoSessionManager
 
 class MongoImplementation(DatabaseInterface):
     database_name = "Mongo"
-    session_factory = MongoSessionManager()
+    session_factory = MongoSessionManager
 
     def __init__(self, *args, session, **kwargs) -> None:
         self.session = session

@@ -1,6 +1,4 @@
-import json
 import sys
-import traceback
 
 import pydantic_settings
 from asgi_correlation_id import correlation_id
@@ -8,7 +6,6 @@ from loguru import logger
 
 
 # -- Filters & formats --
-
 
 
 def correlation_id_filter(record: dict) -> bool:
@@ -75,6 +72,7 @@ def setup_file_human_logger(settings: pydantic_settings.BaseSettings):
         serialize=False,
     )
 
+
 #
 # def setup_safe_json_logger(settings: pydantic_settings.BaseSettings):
 #     logger.add(
@@ -121,25 +119,21 @@ BOLD_RED = "<bold><fg 196>"
 # -- Setup function --
 def logger_setup(settings: pydantic_settings.BaseSettings):
     logger.remove()
-
-    # Sub versions
-    logger.level("ENTER", no=22, color="<green>", icon="🚀")
-    logger.level("EXIT", no=23, color="<green>", icon="🏁")
-    logger.level("HTTPExc", no=24, color="<green>", icon="🏁")
-
-    # TOP app
     logger.level(
-        "START", no=21, color=f"<underline><bold>{MAGENTA}", icon="🛬"
+        "ENTER", no=21, color=f"<underline><bold>{DEEP_BLUE}", icon="🛬"
     )
-    logger.level("END 200", no=26, color="<underline><bold><green>", icon="✅")
+    logger.level("Manual HTTPExc", no=24, color="<green>", icon="🏁")
     logger.level(
-        "END 300", no=27, color=f"<underline><bold>{WARM_ORANGE}", icon="🔀"
+        "EXIT 200", no=26, color="<underline><bold><green>", icon="✅"
     )
     logger.level(
-        "END 400", no=28, color=f"<underline><bold>{ORANGE_RED}", icon="⚠️"
+        "EXIT 300", no=27, color=f"<underline><bold>{WARM_ORANGE}", icon="🔀"
     )
     logger.level(
-        "END 500", no=29, color=f"<underline><bold>{BOLD_RED}", icon="💥"
+        "EXIT 400", no=28, color=f"<underline><bold>{ORANGE_RED}", icon="⚠️"
+    )
+    logger.level(
+        "EXIT 500", no=29, color=f"<underline><bold>{BOLD_RED}", icon="💥"
     )
 
     setup_console_human_logger(settings)

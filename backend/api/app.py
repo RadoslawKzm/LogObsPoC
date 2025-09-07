@@ -11,7 +11,6 @@ from loguru import logger
 
 from backend.api import v1_app, v2_app
 from backend.api.health_check import health_router
-from backend.config import settings
 from backend.loguru_logger.log_config import logger_setup
 from backend.config import settings
 
@@ -35,19 +34,11 @@ async def log_requests(request: fastapi.Request, call_next):
         method=request.method,
         path=request.url.path,
     ):
-
-        logger.log(
-            "START",
-            f"HTTP {http_version} Inbound:TOP | "
-            f"{request.method} {request.url.path}",
-        )
+        logger.log("ENTER", f"IN >> {request.method} {request.url.path}")
     start = time.perf_counter()
     response = await call_next(request)
     duration = time.perf_counter() - start
-    msg = (
-        f"HTTP Outbound {request.method} {request.url.path} | "
-        f"{response.status_code} {duration:.3f}s"
-    )
+    msg = f"<< OUT {response.status_code}: {duration:.3f}s"
     with logger.contextualize(
         method=request.method,
         path=request.url.path,
@@ -55,13 +46,13 @@ async def log_requests(request: fastapi.Request, call_next):
         duration=duration,
     ):
         if 200 <= response.status_code <= 299:
-            logger.log("END 200", msg)
+            logger.log("EXIT 200", msg)
         elif 300 <= response.status_code <= 399:
-            logger.log("END 300", msg)
+            logger.log("EXIT 300", msg)
         elif 400 <= response.status_code <= 499:
-            logger.log("END 400", msg)
+            logger.log("EXIT 400", msg)
         else:  # 500++
-            logger.log("END 500", msg)
+            logger.log("EXIT 500", msg)
     return response
 
 

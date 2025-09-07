@@ -2,6 +2,4 @@
 /deployment/mongo_data/
 /deployment/postgres_data/
 /.idea/
-/backend/api/logs/
-/backend/api/v1/logs/
-/backend/api/v2/logs/
+**/logs/

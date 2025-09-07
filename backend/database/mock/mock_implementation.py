@@ -2,7 +2,7 @@ import typing
 
 from loguru import logger
 
-from backend.api.v2.exceptions import db_exceptions
+from backend.exceptions import db_exceptions
 from backend.database.interface import DatabaseInterface
 from backend.database.mock import MockSessionManager
 

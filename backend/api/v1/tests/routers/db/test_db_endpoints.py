@@ -1,7 +1,7 @@
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from backend.api.v2.routers.db.endpoints import db_router
+from backend.api.v1.routers.db.endpoints import db_router
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 

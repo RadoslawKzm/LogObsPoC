@@ -13,9 +13,8 @@ from loguru import logger
 from backend.loguru_logger.log_config import logger_setup
 from backend.config import settings
 
-from . import routers
-from .exceptions import exception_handlers as exc
-from .middleware import add_http_middleware
+from backend.api.v2 import routers
+from backend.exceptions import exception_handlers as exc
 
 
 @asynccontextmanager
@@ -36,7 +35,7 @@ _app = FastAPI(
     root_path="",
     default_response_class=ORJSONResponse,
 )
-add_http_middleware(app=_app)
+
 
 _app.add_middleware(
     CorrelationIdMiddleware,
@@ -58,10 +57,14 @@ _app = exc.add_exception_handlers(app=_app)
 _app.include_router(router=routers.about)
 _app.include_router(router=routers.health)
 _app.include_router(router=routers.files_router)
+_app.include_router(router=routers.user_router)
 
 
 v2_app = _app
-
+logger.info(
+    f"V2 link: "
+    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api/v2{v2_app.docs_url}"
+)
 
 if __name__ == "__main__":
     """
@@ -71,6 +74,7 @@ if __name__ == "__main__":
     from manage import app then the value is 'app' or 'manage.app'
     """
     logger.info("V2 started")
+    logger.info(f"V2 link: " f"http://0.0.0.0:8762/api/v2{v2_app.docs_url}")
     uvicorn.run(
         "app:v2_app",
         host="0.0.0.0",
