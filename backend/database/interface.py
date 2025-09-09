@@ -7,7 +7,6 @@ from typing import ClassVar, Literal, overload
 from sqlmodel import SQLModel
 
 import fastapi
-import pydantic
 
 if typing.TYPE_CHECKING:
     from backend.database import (
@@ -103,17 +102,17 @@ class DatabaseInterface(abc.ABC):
         self,
         key: str,
         value: str,
-        place: str = None,
-    ) -> SQLModel | False:
+        place: str,
+    ) -> typing.Any | False:
         pass
 
     @abc.abstractmethod
     def get_many_records(
         self,
-        page_num: int = 1,
-        page_size: int = 20,
-        place: typing.Any = None,
-    ) -> list:
+        page_num: int,
+        page_size: int,
+        place: str,
+    ) -> list | None:
         """Need to be separate from get_record.
         Some databases offer bulk operations.
         If db supports bulk get, please implement.
@@ -122,30 +121,30 @@ class DatabaseInterface(abc.ABC):
         There is a risk of mistake while function call.
         """
 
-    @abc.abstractmethod
-    def list_records(
-        self,
-        start: int,
-        size: int,
-    ) -> typing.List[typing.Any]:
-        """Implement function that returns all available records.
-        Implement simple pagination with start pointer and size.
-        """
-        pass
+    # @abc.abstractmethod
+    # def list_records(
+    #     self,
+    #     start: int,
+    #     size: int,
+    # ) -> typing.List[typing.Any]:
+    #     """Implement function that returns all available records.
+    #     Implement simple pagination with start pointer and size.
+    #     """
+    #     pass
 
     @abc.abstractmethod
     def add_record(
         self,
-        body: SQLModel,
-        place: typing.Any,
-    ) -> SQLModel | None:
+        data: typing.Any,
+        place: str,
+    ) -> typing.Any | None:
         pass
 
     @abc.abstractmethod
     def add_many_records(
         self,
-            records: list[SQLModel],
-            place: str,
+        data: list[typing.Any],
+        place: str,
     ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
@@ -158,14 +157,16 @@ class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
     def update_record(
         self,
-        record: typing.Any,
-    ):
+        data: typing.Any,
+        place: str,
+    ) -> typing.Any:
         pass
 
     @abc.abstractmethod
     def update_many_records(
         self,
-        records: list[typing.Any],
+        data: list[typing.Any],
+        place: str,
     ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
@@ -187,7 +188,8 @@ class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
     def delete_many_records(
         self,
-        records: list[typing.Any],
+        data: list[typing.Any],
+        place: str,
     ):
         """Need to be separate from delete_record.
         Some databases offer bulk operations.
@@ -196,7 +198,6 @@ class DatabaseInterface(abc.ABC):
         Function name contains 'many' due to similarities with delete_record.
         There is a risk of mistake while function call.
         """
-
 
 
 PG_SESSION = typing.Annotated[

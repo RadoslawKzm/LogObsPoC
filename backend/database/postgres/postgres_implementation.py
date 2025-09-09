@@ -27,9 +27,9 @@ class PostgresImplementation(DatabaseInterface):
 
     async def get_record(
         self,
-        key: str = None,
-        value: str = None,
-        place: str = None,
+        key: str,
+        value: str,
+        place: str,
     ) -> T | False:
         logger.opt(lazy=True).debug(
             "Getting key:{key} value:{value} ," "place:{place}",
@@ -47,9 +47,9 @@ class PostgresImplementation(DatabaseInterface):
 
     async def get_many_records(
         self,
-        page_num: int = 1,
-        page_size: int = 20,
-        place: str = None,
+        page_num: int,
+        page_size: int,
+        place: str,
     ) -> list[T] | None:
         """Need to be separate from get_record.
         *This function returns requested page_size + 1*
@@ -75,34 +75,22 @@ class PostgresImplementation(DatabaseInterface):
         results = results.scalars().all()
         return results or None
 
-    async def list_records(
-        self,
-        start: int,
-        size: int,
-    ) -> list[T] | None:
-        """Implement function that returns all available records.
-        Implement simple pagination with start pointer and size.
-        """
-        pass
-
     async def add_record(
         self,
-        *args,
-        record: T,
+        data: T,
         place: str,
-        **kwargs,
     ) -> T | None:
         table: type[SQLModel] = tables.get(place, None)
         if table is None:
             return None
-        db_record = table.model_validate(record)
+        db_record = table.model_validate(data)
         try:
             self.session.add(db_record)
             await self.session.commit()
             await self.session.refresh(db_record)
         except Exception as exc:
             exc = db_exceptions.sql.AddRecordError
-            msg: str = f"Record: {record.model_dump()}"
+            msg: str = f"Record: {data.model_dump()}"
             raise exc(internal_message=f"{exc} {safe_log(msg)}") from exc
         return db_record
 
@@ -122,12 +110,13 @@ class PostgresImplementation(DatabaseInterface):
         logger.debug(msg)
         return msg
 
-    async def update_record(self, *args, **kwargs):
-        msg: str = "Updating record in Postgres"
-        logger.debug(msg)
-        return msg
+    async def update_record(self, data: T, place: str) -> T:
+        self.session.add(data)
+        await self.session.commit()
+        await self.session.refresh(data)
+        return data
 
-    async def update_many_records(self, *args, **kwargs) -> str:
+    async def update_many_records(self, data: list[T], place: str) -> str:
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -156,8 +145,11 @@ class PostgresImplementation(DatabaseInterface):
             raise db_exceptions.DbError from exc
         return result.rowcount  # result.rowcount number of rows affected
 
-
-    async def delete_many_records(self, *args, **kwargs) -> str:
+    async def delete_many_records(
+        self,
+        data: list[T],
+        place: str,
+    ) -> str:
         """Need to be separate from delete_record.
         Some databases offer bulk operations.
         If db supports bulk delete, please implement.

@@ -78,7 +78,7 @@ class BaseCustomError(Exception):
     def openapi(cls):
         return {
             "summary": f"{cls.http_code}: {cls.__name__}",
-            "description": cls.internal_message,
+            "description": cls.external_message,
             "value": {
                 "message": cls.external_message,
                 "internal_code": cls.internal_code,

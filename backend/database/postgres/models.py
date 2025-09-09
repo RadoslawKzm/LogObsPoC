@@ -25,9 +25,10 @@ class Workspace(SQLModel, table=True):
     __tablename__ = "workspaces"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    workspace_id: str = Field(index=True, unique=True)
     name: str = Field(index=True)
 
-    user_id: int = Field(foreign_key="users.id", ondelete="CASCADE")
+    user_id: str = Field(foreign_key="users.user_id", ondelete="CASCADE")
     owner: Optional[User] = Relationship(back_populates="workspaces")
 
 
@@ -35,12 +36,13 @@ class File(SQLModel, table=True):
     __tablename__ = "files"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    file_id: str = Field(index=True, unique=True)
     name: str
     url: str
     size_mb: float
     type: str
 
-    user_id: int = Field(foreign_key="users.id", ondelete="CASCADE")
+    user_id: str = Field(foreign_key="users.user_id", ondelete="CASCADE")
     owner: Optional[User] = Relationship(back_populates="files")
 
 
@@ -73,6 +75,7 @@ if __name__ == "__main__":
             # Add workspaces
             for w in range(1, 11):
                 workspace = Workspace(
+                    workspace_id=f"workspace_{(u-1)*10+w}",
                     name=f"Workspace {w} of user {u}",
                     owner=user,
                 )
@@ -81,6 +84,7 @@ if __name__ == "__main__":
             # Add files
             for f in range(1, 11):
                 file = File(
+                    file_id=f"file_{(u-1)*10+f}",
                     name=f"File {f} of user {u}",
                     url=f"https://example.com/user{u}/file{f}.txt",
                     size_mb=10 * f,

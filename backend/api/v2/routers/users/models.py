@@ -9,6 +9,11 @@ class User(pydantic.BaseModel):
     model_config = {"from_attributes": True}  # <-- allow User instances
 
 
-class UserPageResponse(pydantic.BaseModel):
+class UserUpdate(pydantic.BaseModel):
+    name: str
+    email: str
+
+
+class UsersPageResponse(pydantic.BaseModel):
     users: list[User]
     page: Page

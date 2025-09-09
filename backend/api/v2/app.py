@@ -58,6 +58,7 @@ _app.include_router(router=routers.about)
 _app.include_router(router=routers.health)
 _app.include_router(router=routers.files_router)
 _app.include_router(router=routers.users_router)
+_app.include_router(router=routers.workspaces_router)
 
 
 v2_app = _app
