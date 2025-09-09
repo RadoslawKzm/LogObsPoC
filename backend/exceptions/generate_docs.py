@@ -87,7 +87,7 @@ def prepare_codes_explanation(explanations: list, tree: dict, indent: int = 3):
                 explanations.append(
                     f"{'#' * indent} <a id='code-{err_cls['object'].internal_code}'></a> `{err_cls['object'].internal_code}` {key}"
                 )
-                explanations.append(f"{err_cls['object'].external_message}<br>")
+                explanations.append(f"External message: {err_cls['object'].external_message}<br>")
                 explanations.append(
                     f"_Probable cause: {err_cls['object'].internal_message}_"
                 )

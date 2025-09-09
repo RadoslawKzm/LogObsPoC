@@ -79,46 +79,65 @@ def test_client(test_app):
 def test_http_error_handler(test_client):
     response = test_client.get("/raise-http-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == BaseCustomError.internal_code
+
+
 
 
 def test_api_error_handler(test_client):
     response = test_client.get("/raise-api-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == api_exceptions.ApiError.internal_code
 
 
 def test_auth_error_handler(test_client):
     response = test_client.get("/raise-auth-error")
     assert response.status_code == 401
-    assert response.json() == {"message": "Authentication or authorization required."}
+    response = response.json()
+    assert response["message"] == "Authentication or authorization required."
+    assert response["internal_code"] == auth_exceptions.AuthError.internal_code
 
 
 def test_core_error_handler(test_client):
     response = test_client.get("/raise-core-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == core_exceptions.CoreError.internal_code
 
 
 def test_cloud_error_handler(test_client):
     response = test_client.get("/raise-cloud-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == cloud_exceptions.CloudError.internal_code
 
 
 def test_db_error_handler(test_client):
     response = test_client.get("/raise-db-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == db_exceptions.DbError.internal_code
 
 
 def test_base_error_handler(test_client):
     response = test_client.get("/raise-base-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == BaseCustomError.internal_code
 
 
 def test_generic_error_handler(test_client):
     response = test_client.get("/raise-generic-error")
     assert response.status_code == 500
-    assert response.json() == {"message": error_msg}
+    response = response.json()
+    assert response["message"] == error_msg
+    assert response["internal_code"] == BaseCustomError.internal_code
+

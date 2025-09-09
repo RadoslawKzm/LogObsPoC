@@ -4,7 +4,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
+import fastapi
 from backend.exceptions import db_exceptions
+from backend.exceptions import BaseCustomError
 from backend.database.config import pg_config
 from backend.database.postgres.session_measurement import (
     InstrumentedAsyncSession,
@@ -57,7 +59,7 @@ class PostgresSessionManager:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         logger.debug("Postgres session manager __aexit__")
         if any((exc_type, exc_val, exc_tb)):
-            if isinstance(exc_val, db_exceptions.sql.FlowControlError):
+            if isinstance(exc_val, (fastapi.HTTPException, BaseCustomError)):
                 # Forwarding dev control flow exceptions giving HTTP4xx
                 raise exc_val
             logger.opt(exception=exc_val).error("Error in DB session occurred")

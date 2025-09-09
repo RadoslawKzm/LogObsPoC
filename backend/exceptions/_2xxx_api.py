@@ -10,6 +10,12 @@ class ApiError(BaseCustomError):
     external_message = "Internal server error. Our team has been notified."
     internal_message = "General API error."
 
+    _api_errors = {}
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls._api_errors[cls.__name__] = cls.openapi()
+
 
 # === 21xx Input / Validation (HTTP 4xx) ===
 class InvalidInputError(ApiError):
@@ -66,11 +72,15 @@ class RequestTimeoutError(UnknownServerError):
     http_code = fastapi.status.HTTP_504_GATEWAY_TIMEOUT
     internal_code = 2202
     external_message = "Request timed out."
-    internal_message = "API request exceeded timeout while waiting for a response."
+    internal_message = (
+        "API request exceeded timeout while waiting for a response."
+    )
 
 
 class ConfigurationError(UnknownServerError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 2203
     external_message = "Configuration error."
-    internal_message = "API configuration or environment is invalid or missing."
+    internal_message = (
+        "API configuration or environment is invalid or missing."
+    )

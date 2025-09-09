@@ -1,14 +1,16 @@
 import typing
-import pydantic
+
 
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import SQLModel, create_engine, select, text
+from sqlmodel import SQLModel, create_engine, select, delete
 
 from backend.database.interface import DatabaseInterface
 from backend.database.postgres import PostgresSessionManager
 from backend.database.config import pg_config
 from backend.database.postgres.models import tables
+from backend.exceptions import db_exceptions
+from backend.loguru_logger import safe_log
 
 COLUMN_NAME = str
 COLUMN_VALUE = str
@@ -43,31 +45,41 @@ class PostgresImplementation(DatabaseInterface):
         result = results.scalars().first()
         return result or None
 
-    async def get_many_records(self, *args, **kwargs) -> list[T | None]:
+    async def get_many_records(
+        self,
+        page_num: int = 1,
+        page_size: int = 20,
+        place: str = None,
+    ) -> list[T] | None:
         """Need to be separate from get_record.
-        Some databases offer bulk operations.
-        If db supports bulk get, please implement.
-        If db doesn't support bulk get, please implement for loop get_record.
-        Function name contains 'many' due to similarities with get_record.
-        There is a risk of mistake while function call.
+        *This function returns requested page_size + 1*
+        Reasoning: It indicates if there is more items for next page.
+        Edge case: you get all records remaining but result size==page_size.
+        This way you send user page link that will have no results.
+        Using this function please: trim last record in list.
+        1. Check if returned size is page_size+1.
+        - If yes means next page is available.
+        - If not means this is your last page.
+        2. Trim last record in list if above page_size
         """
-        msg: str = "Getting many records from Postgres"
-        logger.debug(msg)
-        return msg
-
-        # logger.debug("Getting many records to Postgres")
-        # result = await self.session.execute(
-        #     text("SELECT id, username, email FROM users")
-        # )
-        # rows = result.all()
-        # # rows is list of sqlalchemy.engine.Row objects, convert to dicts:
-        # return rows
+        logger.opt(lazy=True).debug(
+            "Getting place:{place}",
+            place=lambda: place,
+        )
+        table = tables.get(place, None)
+        if table is None:
+            return None
+        offset: int = (page_num - 1) * page_size
+        statement = select(table).offset(offset).limit(page_size + 1)
+        results = await self.session.execute(statement)
+        results = results.scalars().all()
+        return results or None
 
     async def list_records(
         self,
         start: int,
         size: int,
-    ) -> typing.List[typing.Any]:
+    ) -> list[T] | None:
         """Implement function that returns all available records.
         Implement simple pagination with start pointer and size.
         """
@@ -76,20 +88,29 @@ class PostgresImplementation(DatabaseInterface):
     async def add_record(
         self,
         *args,
-        body: pydantic.BaseModel,
+        record: T,
         place: str,
         **kwargs,
-    ) -> T | False:
-        table = tables.get(place, None)
+    ) -> T | None:
+        table: type[SQLModel] = tables.get(place, None)
         if table is None:
             return None
+        db_record = table.model_validate(record)
         try:
-            record = self.session.add(body)
-        except Exception:
-            return None
-        return record
+            self.session.add(db_record)
+            await self.session.commit()
+            await self.session.refresh(db_record)
+        except Exception as exc:
+            exc = db_exceptions.sql.AddRecordError
+            msg: str = f"Record: {record.model_dump()}"
+            raise exc(internal_message=f"{exc} {safe_log(msg)}") from exc
+        return db_record
 
-    async def add_many_records(self, *args, **kwargs) -> str:
+    async def add_many_records(
+        self,
+        records: list[T],
+        place: str,
+    ) -> str:
         """Need to be separate from add_record.
         Some databases offer bulk operations.
         If db supports bulk add, please implement.
@@ -118,10 +139,23 @@ class PostgresImplementation(DatabaseInterface):
         logger.debug(msg)
         return msg
 
-    async def delete_record(self, *args, **kwargs) -> str:
-        msg = "Deleting record in Postgres"
-        logger.debug(msg)
-        return msg
+    async def delete_record(
+        self,
+        key: str,
+        value: str,
+        place: str,
+    ) -> int | bool:
+        table: type[SQLModel] = tables.get(place, None)
+        if table is None:
+            return False
+        statement = delete(table).where(getattr(table, key) == value)
+        try:
+            result = await self.session.execute(statement)
+            await self.session.commit()
+        except Exception as exc:
+            raise db_exceptions.DbError from exc
+        return result.rowcount  # result.rowcount number of rows affected
+
 
     async def delete_many_records(self, *args, **kwargs) -> str:
         """Need to be separate from delete_record.

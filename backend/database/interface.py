@@ -103,15 +103,16 @@ class DatabaseInterface(abc.ABC):
         self,
         key: str,
         value: str,
-        place: typing.Any = None,
+        place: str = None,
     ) -> SQLModel | False:
         pass
 
     @abc.abstractmethod
     def get_many_records(
         self,
-        records: typing.Any,
-        table: typing.Any = None,
+        page_num: int = 1,
+        page_size: int = 20,
+        place: typing.Any = None,
     ) -> list:
         """Need to be separate from get_record.
         Some databases offer bulk operations.
@@ -135,15 +136,16 @@ class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
     def add_record(
         self,
-        body: typing.Any,
+        body: SQLModel,
         place: typing.Any,
-    ) -> SQLModel | False:
+    ) -> SQLModel | None:
         pass
 
     @abc.abstractmethod
     def add_many_records(
         self,
-        records: list[typing.Any],
+            records: list[SQLModel],
+            place: str,
     ):
         """Need to be separate from add_record.
         Some databases offer bulk operations.
@@ -176,7 +178,9 @@ class DatabaseInterface(abc.ABC):
     @abc.abstractmethod
     def delete_record(
         self,
-        record: typing.Any,
+        key: str,
+        value: str,
+        place: str,
     ):
         pass
 
@@ -192,3 +196,18 @@ class DatabaseInterface(abc.ABC):
         Function name contains 'many' due to similarities with delete_record.
         There is a risk of mistake while function call.
         """
+
+
+
+PG_SESSION = typing.Annotated[
+    "PostgresImplementation",
+    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="Postgres")),
+]
+MONGO_SESSION = typing.Annotated[
+    "MongoImplementation",
+    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="Mongo")),
+]
+FS_SESSION = typing.Annotated[
+    "FileStorageImplementation",
+    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
+]

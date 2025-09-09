@@ -6,7 +6,6 @@ from ._4000_base import DbError
 # === 42xx SQL codes (HTTP 5xx) ===
 class MongoError(DbError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
-    external_message = "Unexpected error. We're looking into it."
     internal_code = 4200
     internal_message = (
         "Base unexpected MongoDB exception. ",
@@ -15,7 +14,6 @@ class MongoError(DbError):
 
 class ExampleError(MongoError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
-    external_message = "Unexpected error. We're looking into it."
     internal_code = 4201
     internal_message = (
         "Base unexpected MongoDB exception. ",

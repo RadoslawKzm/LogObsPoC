@@ -11,8 +11,14 @@ class User(SQLModel, table=True):
     name: str = Field(index=True)
     email: str = Field(index=True)
 
-    workspaces: List["Workspace"] = Relationship(back_populates="owner")
-    files: List["File"] = Relationship(back_populates="owner")
+    workspaces: list["Workspace"] = Relationship(
+        back_populates="owner",
+        cascade_delete=True,  # for python cascade delete
+    )
+    files: List["File"] = Relationship(
+        back_populates="owner",
+        cascade_delete=True,  # for python cascade delete
+    )
 
 
 class Workspace(SQLModel, table=True):
@@ -21,7 +27,7 @@ class Workspace(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
 
-    user_id: int = Field(foreign_key="users.id")
+    user_id: int = Field(foreign_key="users.id", ondelete="CASCADE")
     owner: Optional[User] = Relationship(back_populates="workspaces")
 
 
@@ -34,17 +40,18 @@ class File(SQLModel, table=True):
     size_mb: float
     type: str
 
-    user_id: int = Field(foreign_key="users.id")
+    user_id: int = Field(foreign_key="users.id", ondelete="CASCADE")
     owner: Optional[User] = Relationship(back_populates="files")
 
 
-tables: dict = {
+tables: dict[str, type[SQLModel]] = {
     "users": User,
     "workspaces": Workspace,
     "files": File,
 }
 
 if __name__ == "__main__":
+    # need to comment out postgres implementation in init
     from backend.database.config import pg_config
     from sqlmodel import Session, create_engine
 

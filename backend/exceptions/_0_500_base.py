@@ -25,9 +25,7 @@ class BaseCustomError(Exception):
 
     http_code: int = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code: int = 500
-    external_message: str = (
-        "Internal server error. Our team has been notified."
-    )
+    external_message = "Internal server error. Our team has been notified."
     internal_message: str
     _tree: dict = {}
 
@@ -81,5 +79,8 @@ class BaseCustomError(Exception):
         return {
             "summary": f"{cls.http_code}: {cls.__name__}",
             "description": cls.internal_message,
-            "value": {"message": cls.external_message},
+            "value": {
+                "message": cls.external_message,
+                "internal_code": cls.internal_code,
+            },
         }

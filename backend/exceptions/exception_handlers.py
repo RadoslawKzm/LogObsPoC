@@ -25,6 +25,7 @@ def log_traceback(
     logger_obj: "Logger",
     level: str,
     exc: BaseCustomError,
+    tb: bool = True,
 ) -> None:
     logger_obj.log(level, f"{type(exc)} is handled.")
     logger_obj.opt(exception=exc).log(
@@ -32,17 +33,23 @@ def log_traceback(
         f"Internal message: {exc.internal_message}, "
         f"Internal code: {exc.internal_code}, "
         f"HTTP response code: {exc.http_code}, "
-        f"External message: {exc.external_message}, "
-        f"Traceback: {safe_log(''.join(traceback.format_exc()))}",
+        f"External message: {exc.external_message}, ",
     )
+    if tb:
+        logger_obj.opt(exception=exc).log(
+            level,
+            f"Traceback: {safe_log(''.join(traceback.format_exc()))}",
+        )
     logger_obj.log(level, f"Response: {exc.external_message}")
 
 
 def prepare_orjson(exc: BaseCustomError, request: Request) -> ORJSONResponse:
     return ORJSONResponse(
         status_code=exc.http_code,
-        content={"message": exc.external_message},
-        headers=request.headers,
+        content={
+            "message": exc.external_message,
+            "internal_code": exc.internal_code,
+        },
     )
 
 
@@ -66,7 +73,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         request: Request,
         exc: ApiError,
     ) -> ORJSONResponse:
-        log_traceback(logger_obj=logger, level="HTTPExc", exc=exc)
+        log_traceback(logger_obj=logger, level="INFO", exc=exc, tb=False)
         return prepare_orjson(exc=exc, request=request)
 
     @app.exception_handler(AuthError)
@@ -74,7 +81,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         request: Request,
         exc: AuthError,
     ) -> JSONResponse:
-        log_traceback(logger_obj=logger, level="Manual HTTPExc", exc=exc)
+        log_traceback(logger_obj=logger, level="WARNING", exc=exc)
         return prepare_orjson(exc=exc, request=request)
 
     @app.exception_handler(CoreError)
@@ -120,7 +127,10 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         logger.critical(f"Response: {BaseCustomError.external_message}")
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"message": BaseCustomError.external_message},
+            content={
+                "message": BaseCustomError.external_message,
+                "internal_code": BaseCustomError.internal_code,
+            },
         )
 
     return app

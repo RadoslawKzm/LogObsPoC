@@ -64,6 +64,7 @@
       - `4105` Programming | HTTP 500 | [Details](#code-4105)]
       - `4106` InvalidRequest | HTTP 400 | [Details](#code-4106)]
       - `4107` Database | HTTP 500 | [Details](#code-4107)]
+      - `4108` AddRecord | HTTP 409 | [Details](#code-4108)]
       - ### 42xx Mongo Codes
       - `4200` Mongo | HTTP 500 | [Details](#code-4200)]
       - `4201` Example | HTTP 500 | [Details](#code-4201)]
@@ -111,17 +112,17 @@ _Probable cause: Unexpected and Uncaught base exception_
 General AuthenticationError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-1101'></a> `1101` UnauthorizedError
-Invalid or missing authentication.<br>
+External message: Invalid or missing authentication.<br>
 _Probable cause: Missing or invalid authentication token._
 #### <a id='code-1102'></a> `1102` SessionExpiredError
-Session expired. Please log in again.<br>
+External message: Session expired. Please log in again.<br>
 _Probable cause: User session or token has expired._
 #### Authorization Codes
 #### <a id='code-1200'></a> `1200` AuthorizationError
 General AuthorizationError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-1201'></a> `1201` ForbiddenError
-You do not have permission to access this resource.<br>
+External message: You do not have permission to access this resource.<br>
 _Probable cause: User lacks sufficient permissions._
 ### Api Codes
 #### <a id='code-2000'></a> `2000` ApiError
@@ -132,54 +133,54 @@ _Probable cause: Unexpected and Uncaught base exception_
 General InvalidInputError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-2101'></a> `2101` MissingFieldError
-Missing required field.<br>
+External message: Missing required field.<br>
 _Probable cause: Mandatory field missing in request payload._
 #### <a id='code-2102'></a> `2102` FieldFormatError
-Incorrect field format.<br>
+External message: Incorrect field format.<br>
 _Probable cause: One or more fields violate validation rules._
 #### <a id='code-2103'></a> `2103` NotFoundError
-Requested resource not found.<br>
+External message: Requested resource not found.<br>
 _Probable cause: Resource does not exist or is inaccessible._
 #### <a id='code-2104'></a> `2104` RequestConflictError
-Request conflict.<br>
+External message: Request conflict.<br>
 _Probable cause: Request conflicts with the current resource state._
 #### UnknownServer Codes
 #### <a id='code-2200'></a> `2200` UnknownServerError
 General UnknownServerError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-2201'></a> `2201` ExternalServiceUnavailableError
-External service unavailable.<br>
+External message: External service unavailable.<br>
 _Probable cause: Dependent external service is down or unreachable._
 #### <a id='code-2202'></a> `2202` RequestTimeoutError
-Request timed out.<br>
+External message: Request timed out.<br>
 _Probable cause: API request exceeded timeout while waiting for a response._
 #### <a id='code-2203'></a> `2203` ConfigurationError
-Configuration error.<br>
+External message: Configuration error.<br>
 _Probable cause: API configuration or environment is invalid or missing._
 ### Core Codes
 #### <a id='code-3000'></a> `3000` CoreError
 General CoreError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-3001'></a> `3001` UnexpectedError
-Unexpected error.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Unhandled failure in core logic._
 #### <a id='code-3002'></a> `3002` ConfigurationError
-Configuration error.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Critical configuration value missing or invalid._
 #### <a id='code-3003'></a> `3003` ResourceConflictError
-Resource conflict.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Conflict with current resource state due to concurrency or version mismatch._
 #### <a id='code-3004'></a> `3004` ExternalServiceError
-External service error.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Failed communication with an upstream dependency._
 #### <a id='code-3005'></a> `3005` TimeoutError
-Request timed out.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Request exceeded the allowed time limit._
 #### <a id='code-3006'></a> `3006` DataInconsistencyError
-Data inconsistency detected.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Application-level integrity or consistency check failed._
 #### <a id='code-3007'></a> `3007` FeatureDisabledError
-Feature temporarily disabled.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Feature has been disabled by system configuration._
 ### Db Codes
 #### <a id='code-4000'></a> `4000` DbError
@@ -190,57 +191,60 @@ _Probable cause: Unexpected and Uncaught base exception_
 General SQLError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-4101'></a> `4101` ConnError
-Temporary issue. Please try again shortly.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Failed to establish a connection to the SQL database._
 #### <a id='code-4102'></a> `4102` IntegrityError
-A data error occurred. Please contact support.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Integrity constraint violated (foreign key, unique)._
 #### <a id='code-4103'></a> `4103` DataError
-Invalid data provided.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Sent data is invalid or incompatible with schema._
 #### <a id='code-4104'></a> `4104` OperationalError
-Temporary service issue. Try again later.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: DB operation failed due to I/O or connection issue._
 #### <a id='code-4105'></a> `4105` ProgrammingError
-Something went wrong. Please try again later.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: SQL statement contains a programming or syntax error._
 #### <a id='code-4106'></a> `4106` InvalidRequestError
-The request was invalid or unsupported.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: SQL operation was malformed or unsupported._
 #### <a id='code-4107'></a> `4107` DatabaseError
-An unexpected database error occurred.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Parent class of SQLAlchemy exceptions._
+#### <a id='code-4108'></a> `4108` AddRecordError
+External message: Internal server error. Our team has been notified.<br>
+_Probable cause: Unexpected add_record error occurred. Probably adding value to an unique colum that already exists._
 #### Mongo Codes
 #### <a id='code-4200'></a> `4200` MongoError
 General MongoError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-4201'></a> `4201` ExampleError
-Unexpected error. We're looking into it.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: ('Base unexpected MongoDB exception. ', 'If visible in logs, something went uncaught.')_
 #### FileStorage Codes
 #### <a id='code-4300'></a> `4300` FileStorageError
 General FileStorageError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-4301'></a> `4301` FileNotFound
-The requested file was not found.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: File does not exist in the data storage folder._
 #### <a id='code-4302'></a> `4302` FileAlreadyExists
-The file already exists.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Attempted to create a file that already exists._
 #### <a id='code-4303'></a> `4303` FileReadError
-Unable to read the file.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Error occurred while reading the file from storage._
 #### <a id='code-4304'></a> `4304` FileWriteError
-Unable to write to the file.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Error occurred while writing content to the file._
 #### <a id='code-4305'></a> `4305` FileUpdateError
-Unable to update the file.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Error occurred while updating or appending content to the file._
 #### <a id='code-4306'></a> `4306` FileDeleteError
-Unable to delete the file.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Error occurred while deleting the file from storage._
 #### <a id='code-4307'></a> `4307` FileListError
-Unable to list files.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Error occurred while listing files in the data storage folder._
 ### Cloud Codes
 #### <a id='code-5000'></a> `5000` CloudError
@@ -251,41 +255,41 @@ _Probable cause: Unexpected and Uncaught base exception_
 General AWSError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-5101'></a> `5101` AWSPermissionDeniedError
-Permission denied for AWS operation.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Insufficient AWS IAM permissions._
 #### <a id='code-5102'></a> `5102` AWSServiceTimeoutError
-Timeout while communicating with AWS service.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: AWS service did not respond within the timeout window._
 #### <a id='code-5103'></a> `5103` AWSRateLimitExceededError
-AWS rate limit exceeded.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Too many requests to AWS service in a short time._
 #### Azure Codes
 #### <a id='code-5200'></a> `5200` AzureError
 General AzureError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-5201'></a> `5201` AzureAuthenticationError
-Failed to authenticate with Azure cloud.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Azure credentials invalid or expired._
 #### <a id='code-5202'></a> `5202` AzureResourceUnavailableError
-Azure resource is temporarily unavailable.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Azure resource could not be reached or is down._
 #### GCP Codes
 #### <a id='code-5300'></a> `5300` GCPError
 General GCPError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-5301'></a> `5301` GCPAuthenticationError
-Failed to authenticate with Google Cloud.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: GCP credentials invalid or expired._
 #### <a id='code-5302'></a> `5302` GCPQuotaExceededError
-Quota exceeded on Google Cloud service.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: GCP quota exceeded for this operation._
 #### <a id='code-5303'></a> `5303` GCPServiceUnavailableError
-Google Cloud service is temporarily unavailable.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Service down or unreachable on GCP._
 #### OnPrem Codes
 #### <a id='code-5400'></a> `5400` OnPremError
 General OnPremError Base Error.<br>
 _Probable cause: Unexpected and Uncaught base exception_
 #### <a id='code-5401'></a> `5401` TestError
-Internal server error. Our team has been notified.<br>
+External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Unexpected error while communicating with internal infrastructure._

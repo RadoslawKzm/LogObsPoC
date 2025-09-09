@@ -57,7 +57,7 @@ _app = exc.add_exception_handlers(app=_app)
 _app.include_router(router=routers.about)
 _app.include_router(router=routers.health)
 _app.include_router(router=routers.files_router)
-_app.include_router(router=routers.user_router)
+_app.include_router(router=routers.users_router)
 
 
 v2_app = _app

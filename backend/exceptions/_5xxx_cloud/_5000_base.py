@@ -7,5 +7,4 @@ from .._0_500_base import BaseCustomError
 class CloudError(BaseCustomError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 5000
-    external_message = "Internal server error. Our team has been notified."
     internal_message = "Unhandled Cloud error."
