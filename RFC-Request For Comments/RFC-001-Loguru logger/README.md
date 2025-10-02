@@ -69,7 +69,6 @@ We introduce a centralized `logger_setup()` function that:
 - Use `logger.error()`, to record error conditions that affected a specific operation.
 - Use `logger.exception()`, same as error but inside exception handlers to log tracebacks automatically  except Exception: **WITHOUT as exc** 
 - Use `logger.critical()`, to record error conditions that prevent a core function from working.
-- Use `safe_log()` when logging complex objects or dicts inside lazy log calls to avoid key errors
 - `.exception()` automatically adds **active** stack trace and exception info; `.error()` does not  
 - Use `opt(lazy=True)` only on INFO and below. `logger.opt(lazy=True).debug("Message, {fnc}", fnc=lambda: expensive_func())`<br>
 Python has to evaluate all fstrings before passing to loguru. <br>
@@ -157,12 +156,6 @@ Ensure lambda message won't break logging with unescaped JSON etc.
 ### Q: How does `logger.exception()` differ from `logger.error()`?
 
 **A:** `logger.exception()` should be called inside an `except` block; it automatically logs the stack trace and exception info. `logger.error()` just logs the message without traceback.
-
----
-
-### Q: What is the purpose of `safe_log()` and when to use it?
-
-**A:** When logging dicts or complex objects in lazy logs, Loguru tries to unpack dict keys as format fields, causing errors. `safe_log()` converts dicts to JSON strings and escapes braces to prevent this. Use `safe_log()` anytime you log dicts or non-string objects dynamically.
 
 ---
 

@@ -4,7 +4,6 @@ import abc
 import typing
 from collections.abc import AsyncGenerator, Callable
 from typing import ClassVar, Literal, overload
-from sqlmodel import SQLModel
 
 import fastapi
 

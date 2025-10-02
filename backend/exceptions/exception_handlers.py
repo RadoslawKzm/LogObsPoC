@@ -38,7 +38,7 @@ def log_traceback(
     if tb:
         logger_obj.opt(exception=exc).log(
             level,
-            f"Traceback: {safe_log(''.join(traceback.format_exc()))}",
+            f"Traceback: {''.join(traceback.format_exc())}",
         )
     logger_obj.log(level, f"Response: {exc.external_message}")
 
@@ -122,7 +122,7 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         exc: Exception,
     ) -> JSONResponse:
         logger.critical("Generic Exception is handled")
-        formatted_exc = safe_log("".join(traceback.format_exc()))
+        formatted_exc = "".join(traceback.format_exc())
         logger.opt(exception=exc).critical(f"Traceback: {formatted_exc}")
         logger.critical(f"Response: {BaseCustomError.external_message}")
         return JSONResponse(

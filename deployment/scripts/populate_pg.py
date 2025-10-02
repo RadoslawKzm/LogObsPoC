@@ -4,7 +4,7 @@ import pydantic_settings
 
 class Settings(pydantic_settings.BaseSettings):
     HOST: str = "localhost"
-    POSTGRES_EXPOSE_PORT: int = None
+    POSTGRES_PORT: int = None
     POSTGRES_DB: str = None
     POSTGRES_USER: str = None
     POSTGRES_PASSWORD: str = None
@@ -18,9 +18,9 @@ class Settings(pydantic_settings.BaseSettings):
 if __name__ == "__main__":
     pg: pydantic_settings.BaseSettings = Settings()
 
-    print("Postgres settings loaded:")
+    print("Postgres worker_settings loaded:")
     print(f"HOST: {pg.HOST}")
-    print(f"PORT: {pg.POSTGRES_EXPOSE_PORT}")
+    print(f"PORT: {pg.POSTGRES_PORT}")
     print(f"DB: {pg.POSTGRES_DB}")
     print(f"USER: {pg.POSTGRES_USER}")
     print(f"PASSWORD: {pg.POSTGRES_PASSWORD}")
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         user=pg.POSTGRES_USER,
         password=pg.POSTGRES_PASSWORD,
         host=pg.HOST,
-        port=pg.POSTGRES_EXPOSE_PORT,
+        port=pg.POSTGRES_PORT,
     ) as conn:
         # Use context manager for cursor
         with conn.cursor() as cur:

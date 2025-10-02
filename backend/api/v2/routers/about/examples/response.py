@@ -1,8 +1,6 @@
-from typing import Any
-
 from fastapi import status
 
-response_200: dict[int | str, dict[str, Any]] | None = {
+success = {
     "200": {
         "description": "Success",
         "content": {

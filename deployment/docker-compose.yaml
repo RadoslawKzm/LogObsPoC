@@ -1,6 +1,6 @@
 services:
   api:
-    container_name: api
+    container_name: ${API_HOST}
     build:
       context: ../.
       dockerfile: deployment/dockerfiles/backend.dockerfile
@@ -8,24 +8,32 @@ services:
         APP_FOLDER: backend
         VIRTUAL_ENV_PATH: /opt/venv
         ENTRYPOINT_PATH: /deployment/entrypoints/backend_entrypoint.sh
-#    env_file: ./backend.env
+        GUNICORN_CONF_PATH: /deployment/entrypoints/gunicorn_conf.py
     environment:
       VIRTUAL_ENV_PATH: /opt/venv
-      APP_PORT: ${FASTAPI_PORT}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      ENV_TYPE: ${ENV_TYPE}
       POSTGRES_HOSTNAME: ${POSTGRES_HOSTNAME}
       POSTGRES_PORT: ${POSTGRES_PORT}
-    ports: # Host -> Container
-      - '${FASTAPI_PORT}:${FASTAPI_PORT}'
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      RABBITMQ_S_QUEUE: ${RABBITMQ_S_QUEUE}
+      RABBITMQ_M_QUEUE: ${RABBITMQ_M_QUEUE}
+      RABBITMQ_L_QUEUE: ${RABBITMQ_L_QUEUE}
+      RABBITMQ_PREFETCH_COUNT: ${RABBITMQ_PREFETCH_COUNT}
+    ports:
+      - '${API_PORT}:8765'
     volumes:
       - ../backend:/backend
-#      - ../deployment:/deployment
     restart: always
     entrypoint:
       - /deployment/entrypoints/backend_entrypoint.sh
-#      - /opt/venv
     networks:
       - backend
     healthcheck:
@@ -34,14 +42,100 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-#    stdin_open: true # docker run -i
-#    tty: true        # docker run -t
+
+  worker-small:
+    container_name: ${WORKER_HOST}-small
+    build:
+      context: ../.
+      dockerfile: deployment/dockerfiles/worker.dockerfile
+      args:
+        APP_FOLDER: backend
+        VIRTUAL_ENV_PATH: /opt/venv
+        ENTRYPOINT_PATH: /deployment/entrypoints/worker_entrypoint.sh
+        GUNICORN_CONF_PATH: /deployment/entrypoints/gunicorn_conf.py
+    environment:
+      ENV_TYPE: ${ENV_TYPE}
+      WORKER_RABBIT_QUEUE: S_queue
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
+      RABBITMQ_PREFETCH_COUNT: ${RABBITMQ_PREFETCH_COUNT}
+    ports:
+      - '8860:8000'
+    volumes:
+      - ../backend:/backend
+    restart: always
+    entrypoint:
+      - /deployment/entrypoints/worker_entrypoint.sh
+    networks:
+      - backend
+
+  worker-medium:
+    container_name: ${WORKER_HOST}-medium
+    build:
+      context: ../.
+      dockerfile: deployment/dockerfiles/worker.dockerfile
+      args:
+        APP_FOLDER: backend
+        VIRTUAL_ENV_PATH: /opt/venv
+        ENTRYPOINT_PATH: /deployment/entrypoints/worker_entrypoint.sh
+        GUNICORN_CONF_PATH: /deployment/entrypoints/gunicorn_conf.py
+    environment:
+      ENV_TYPE: ${ENV_TYPE}
+      WORKER_RABBIT_QUEUE: M_queue
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
+      RABBITMQ_PREFETCH_COUNT: ${RABBITMQ_PREFETCH_COUNT}
+    ports:
+      - '8861:8000'
+    volumes:
+      - ../backend:/backend
+    restart: always
+    entrypoint:
+      - /deployment/entrypoints/worker_entrypoint.sh
+    networks:
+      - backend
+
+  worker-large:
+    container_name: ${WORKER_HOST}-large
+    build:
+      context: ../.
+      dockerfile: deployment/dockerfiles/worker.dockerfile
+      args:
+        APP_FOLDER: backend
+        VIRTUAL_ENV_PATH: /opt/venv
+        ENTRYPOINT_PATH: /deployment/entrypoints/worker_entrypoint.sh
+        GUNICORN_CONF_PATH: /deployment/entrypoints/gunicorn_conf.py
+    environment:
+      ENV_TYPE: ${ENV_TYPE}
+      WORKER_RABBIT_QUEUE: L_queue
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_VIRTUAL_HOST: ${RABBITMQ_VIRTUAL_HOST}
+      RABBITMQ_PREFETCH_COUNT: ${RABBITMQ_PREFETCH_COUNT}
+    ports:
+      - '8862:8000'
+    volumes:
+      - ../backend:/backend
+    restart: always
+    entrypoint:
+      - /deployment/entrypoints/worker_entrypoint.sh
+    networks:
+      - backend
+
 
   postgres:
     image: postgres
-    container_name: ${POSTGRES_CONTAINER}
+    container_name: ${POSTGRES_HOSTNAME}
     restart: always
-    env_file: .env  # Load environment variables from the .env file
+    env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -50,8 +144,8 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
-    ports: # Host -> Container
-      - "${POSTGRES_EXPOSE_PORT}:5432"
+    ports:
+      - "${POSTGRES_PORT}:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
       interval: 30s
@@ -61,13 +155,28 @@ services:
     networks:
       - backend
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ${RABBITMQ_HOST}
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_PORT}:5672"   # RabbitMQ (AMQP) protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - backend
+
 volumes:
   postgres_data:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      device: ./postgres_data/
-#      o: bind
 
 networks:
   backend:

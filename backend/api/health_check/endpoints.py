@@ -1,140 +1,158 @@
-import random
+import fastapi
+from loguru import logger
+import psutil
 import time
 
-import fastapi
-import psutil
-from loguru import logger
-
-from . import response_examples
+from backend.api.config import settings
 
 health_router = fastapi.APIRouter(prefix="/health-app", tags=["health-app"])
 
-
-@health_router.get(
-    "/",
-    status_code=200,
-    responses=response_examples.response_200,
-)
-async def health() -> dict:
-    log_host_cpu_load()
-    log_host_memory_load()
-    log_host_disk_io()
-    log_host_net_io()
-    # log_container_cpu_usage()
-    # log_container_memory_usage()
-    responses = [
-        "I am Groot",
-        "This is the way",
-        "Luke, I am your father",
-        "Hodor...",
-    ]
-    return {"data": random.choice(responses)}
-
-
-def log_host_cpu_load():
-    cpu_percent = psutil.cpu_percent(interval=None)
-    logger.opt(lazy=True).trace(
-        "Host CPU usage: {cpu:.2f}%",
-        cpu=lambda: psutil.cpu_percent(interval=None),
-    )
-    return cpu_percent
-
-
-def log_host_memory_load() -> None:
-    mem = psutil.virtual_memory()
-    logger.opt(lazy=True).trace(
-        "Host memory usage: {used:.2f} / {total:.2f} GB ({percent:.2f}%)",
-        used=lambda: mem.used / (1024**3),
-        total=lambda: mem.total / (1024**3),
-        percent=lambda: mem.percent,
-    )
-
-
-def log_host_disk_io() -> None:
-    io = psutil.disk_io_counters()
-    logger.opt(lazy=True).trace(
-        "Host disk IO: read {read_mb:.2f} MB, write {write_mb:.2f} MB",
-        read_mb=lambda: io.read_bytes / (1024**2),
-        write_mb=lambda: io.write_bytes / (1024**2),
-    )
-
-
-def log_host_net_io() -> None:
-    net = psutil.net_io_counters()
-    logger.opt(lazy=True).trace(
-        "Host network IO: sent {sent_mb:.2f} MB, received {recv_mb:.2f} MB",
-        sent_mb=lambda: net.bytes_sent / (1024**2),
-        recv_mb=lambda: net.bytes_recv / (1024**2),
-    )
-
-
-def _get_prev_times(
-    *, now: float, usage_ns: float
-) -> tuple[float, ...] | None:
-    prev_time = previous_state["time"]
-    prev_usage_ns = previous_state["usage_ns"]
-
-    # First call: store and return None
-    if prev_time is None or prev_usage_ns is None:
-        previous_state["time"] = now
-        previous_state["usage_ns"] = usage_ns
-        logger.debug("Initial CPU usage reading, waiting for next sample.")
-        return None
-    return prev_time, prev_usage_ns
-
-
-def read_cgroup(path: str) -> int:
-    with open(path) as f:
-        return int(f.read().strip())
-
-
-# Store previous state between calls
-previous_state: dict[str, float | None] = {"time": None, "usage_ns": None}
-
-
-def log_container_cpu_usage() -> None:
-    # total ns used by container
-    usage_ns = read_cgroup("/sys/fs/cgroup/cpu/cpuacct.usage")
-    now = time.time()  # current wall-clock time in seconds
+def get_cgroup_usage(*, path: str) -> int:
+    """Reads a cgroup metric from the specified file."""
+    if not path:
+        return False
     try:
-        prev_time, prev_usage_ns = _get_prev_times(now=now, usage_ns=usage_ns)
-    except TypeError:
-        return None
+        with open(path) as f:
+            return int(f.read().strip())
+    except Exception as e:
+        logger.error(f"Failed to read cgroup value from {path}: {e}")
+        raise
 
-    # Calculate deltas
+
+PREVIOUS_STATE: dict = {
+    "time": time.time(),
+    "usage_ns": get_cgroup_usage(path=settings.CGROUP_CPU_USAGE),
+}
+
+
+def container_cpu_usage() -> tuple:
+    """Logs the container CPU usage."""
+    prev_time = PREVIOUS_STATE["time"]
+    prev_usage_ns = PREVIOUS_STATE["usage_ns"]
+    usage_ns = get_cgroup_usage(path=settings.CGROUP_CPU_USAGE)
+    now = time.time()
+
     delta_time = now - prev_time
     delta_usage = usage_ns - prev_usage_ns
 
-    if delta_time <= 0:
-        logger.warning("Non-positive delta time detected.")
-        return None
+    cpu_quota = get_cgroup_usage(path=settings.CGROUP_CPU_QUOTA)
+    cpu_period = get_cgroup_usage(path=settings.CGROUP_CPU_PERIOD)
+    # if cpu_quota <= 0 or cpu_period <= 0:
+    #     logger.warning("Unable to calculate CPU core count.")
+    #     return None
+    cpu_core_count = cpu_quota / cpu_period
+    cpu_percent = (delta_usage / 1e9) / delta_time * 100 / cpu_core_count
+    # if not cpu_percent:
+    #     logger.warning("Unable to calculate CPU usage percentage.")
+    #     return None
+    PREVIOUS_STATE["time"] = now
+    PREVIOUS_STATE["usage_ns"] = usage_ns
+    return cpu_percent, cpu_core_count
 
-    # Get number of CPUs available to the container (optional but recommended)
+
+def container_ram_usage():
+    ram_usage = get_cgroup_usage(path=settings.CGROUP_MEMORY_USAGE)
+    total_ram = get_cgroup_usage(path=settings.CGROUP_MEMORY_LIMIT)
+    ram_percentage = (ram_usage / total_ram) * 100 if total_ram > 0 else 0
+    return ram_percentage, ram_usage, total_ram
+
+
+def container_stats():
+    if not is_container():
+        return False
+    cpu_percent, cpu_core_count = container_cpu_usage()
+    cpu_core_usage = cpu_percent * cpu_core_count / 100
+    logger.opt(lazy=True).trace(
+        "Container CPU usage: {percent:.2f}% {used:.2f}/{total:.2f} Cores",
+        percent=lambda: cpu_percent,
+        used=lambda: cpu_core_count,
+        total=lambda: cpu_core_usage,
+    )
+    # ----- Container Memory Usage -----
+    ram_percentage, ram_usage, total_ram = container_ram_usage()
+    logger.opt(lazy=True).trace(
+        "Container RAM usage: {percent:.2f}% {usage:.2f}/{total:.2f} GB",
+        percent=lambda: ram_percentage,
+        usage=lambda: ram_usage / (1024**3),
+        total=lambda: total_ram / (1024**3),
+    )
+    return {
+        "CPU": {
+            "percentage": cpu_percent,
+            "cores_used": cpu_core_usage,
+            "cores_total": cpu_core_count,
+        },
+        "RAM": {
+            "percentage": ram_percentage,
+            "used": ram_usage,
+            "total": total_ram,
+        },
+    }
+
+
+def is_container():
     try:
-        cpu_quota = int(read_cgroup("/sys/fs/cgroup/cpu/cpu.cfs_quota_us"))
-        cpu_period = int(read_cgroup("/sys/fs/cgroup/cpu/cpu.cfs_period_us"))
-    except Exception as exc_info:
-        logger.warning(f"Failed to read CPU quota info: {exc_info}")
-        return None
-    # Convert nanoseconds to seconds, then calculate usage %
-    cpu_count = cpu_quota / cpu_period
-    cpu_percent = (delta_usage / 1e9) / delta_time * 100 / cpu_count
-    logger.opt(lazy=True).trace(
-        "Container CPU usage: {cpu:.2f}%",
-        cpu=lambda: cpu_percent,
-    )
-    # Save current state for next sample
-    previous_state["time"] = now
-    previous_state["usage_ns"] = usage_ns
+        container = get_cgroup_usage(path=settings.CGROUP_CPU_USAGE)
+        if not container:
+            return False
+        return True
+    except Exception as e:
+        return False
 
 
-def log_container_memory_usage() -> None:
-    usage = read_cgroup("/sys/fs/cgroup/memory/memory.usage_in_bytes")
-    limit = read_cgroup("/sys/fs/cgroup/memory/memory.limit_in_bytes")
-    percent = (usage / limit) * 100 if limit > 0 else 0
+@health_router.get("/", status_code=200)
+async def health() -> dict:
+    # ----- Host CPU Usage -----
+    host_cpu_percentage = psutil.cpu_percent(interval=None)
+    host_cpu_count = psutil.cpu_count()
+    host_cpu_core_usage = host_cpu_percentage * host_cpu_count / 100
     logger.opt(lazy=True).trace(
-        "Container memory usage: {used:.2f} / {limit:.2f} GB ({percent:.2f}%)",
-        used=lambda: usage / (1024**3),
-        limit=lambda: limit / (1024**3),
-        percent=lambda: percent,
+        "Host CPU usage: {percent:.2f}% {used:.2f}/{total:.2f} Cores",
+        percent=lambda: host_cpu_percentage,
+        used=lambda: host_cpu_core_usage,
+        total=lambda: host_cpu_count,
     )
+    # ----- Host Memory Usage -----
+    host_ram_load = psutil.virtual_memory()
+    logger.opt(lazy=True).trace(
+        "Host memory usage: {percent:.2f}% {used:.2f}/{total:.2f} GB",
+        used=lambda: host_ram_load.used / (1024**3),
+        total=lambda: host_ram_load.total / (1024**3),
+        percent=lambda: host_ram_load.percent,
+    )
+    # ----- Container Usage -----
+    container = container_stats()
+    return {
+        "host": {
+            "CPU": {
+                "percentage": host_cpu_percentage,
+                "cores_used": host_cpu_core_usage,
+                "cores_total": host_cpu_count,
+            },
+            "RAM": {
+                "percentage": host_ram_load.percent,
+                "used": round(host_ram_load.used / (1024**3), 2),
+                "total": host_ram_load.total / (1024**3),
+            },
+        },
+        "container": container,
+    }
+
+
+@health_router.get("/rabbit", status_code=200)
+async def rabbit(request: fastapi.Request) -> dict:
+    """Report RabbitMQ connection health using app.state-stored objects."""
+    conn = getattr(request.app.state, "rabbit_connection", None)
+    ch = getattr(request.app.state, "rabbit_channel", None)
+    if not conn or ch:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"message": "Problem with RabbitMQ"},
+        )
+    if conn.is_closed or ch.is_closed:
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"message": "Not connected to RabbitMQ"},
+        )
+    return {"status": "healthy", "message": "Connected to RabbitMQ"}
+

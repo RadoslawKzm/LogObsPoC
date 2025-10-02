@@ -3,4 +3,5 @@ from .health.endpoints import health_router as health
 from .files.endpoints import files_router
 from .users.endpoints import users_router
 from .workspaces.endpoints import workspaces_router
+from .tasks.endpoints import tasks_router
 from .models import Page

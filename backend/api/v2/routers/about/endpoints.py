@@ -1,7 +1,7 @@
 import fastapi
 from loguru import logger
 
-from . import response_examples
+from . import examples
 
 about_router = fastapi.APIRouter(prefix="/about", tags=["About"])
 
@@ -9,7 +9,7 @@ about_router = fastapi.APIRouter(prefix="/about", tags=["About"])
 @about_router.get(
     "/",
     status_code=200,
-    responses=response_examples.response_200,
+    responses=examples.response.success,
 )
 async def about() -> fastapi.responses.JSONResponse:
     logger.debug("About is called")

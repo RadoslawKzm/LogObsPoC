@@ -14,7 +14,7 @@ class InterceptHandler(logging.Handler):
 
 # Remove default handlers
 logging.root.handlers = []
-logging.root.setLevel(logging.DEBUG)
+logging.root.setLevel(logging.WARNING)
 logging.basicConfig(handlers=[InterceptHandler()])
 
 # Redirect Gunicorn loggers to Loguru

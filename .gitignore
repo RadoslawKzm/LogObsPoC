@@ -3,3 +3,5 @@
 /deployment/postgres_data/
 /.idea/
 **/logs/
+**/.env
+/deployment/rabbitmq_data/

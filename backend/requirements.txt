@@ -1,27 +1,19 @@
-# API modules
 fastapi
-httpx
-uvicorn
 gunicorn
+uvicorn
+sqlalchemy
+sqlmodel
+httpx
+psycopg2-binary
+python-multipart
+psutil
+
+# Worker modules
 pydantic-settings
 orjson
-python-multipart
-
 
 # Database modules
-sqlmodel
-sqlalchemy
-sqlalchemy_utils
-asyncpg
-psycopg2-binary
-sqlmodel
-aiosqlite
-greenlet
-
-# Test
-pytest
-pytest-asyncio
-
+aio-pika
 
 # Logs and lint
 loguru
@@ -29,5 +21,3 @@ asgi_correlation_id
 isort
 ruff
 black
-
-psutil # health check hardware stats

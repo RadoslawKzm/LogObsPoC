@@ -20,6 +20,7 @@ ENV POSTGRES_PORT: ${POSTGRES_PORT}
 ARG VIRTUAL_ENV_PATH
 ARG APP_FOLDER
 ARG ENTRYPOINT_PATH
+ARG GUNICORN_CONF_PATH
 
 # Setup virtual environment
 ENV VIRTUAL_ENV=$VIRTUAL_ENV_PATH
@@ -31,6 +32,10 @@ RUN pip3 --require-virtualenv install  -r /$APP_FOLDER/requirements.txt --quiet
 # copy entrypoint
 COPY $ENTRYPOINT_PATH $ENTRYPOINT_PATH
 RUN chmod +x $ENTRYPOINT_PATH
+
+# copy gunicorn_conf.py
+COPY $GUNICORN_CONF_PATH $GUNICORN_CONF_PATH
+RUN chmod +x $GUNICORN_CONF_PATH
 
 # copy backend data
 ENV PATH="$APP_FOLDER/api:$PATH"

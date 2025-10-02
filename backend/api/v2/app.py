@@ -11,7 +11,7 @@ from fastapi.responses import ORJSONResponse
 from loguru import logger
 
 from backend.loguru_logger.log_config import logger_setup
-from backend.config import settings
+from backend.api.config import settings
 
 from backend.api.v2 import routers
 from backend.exceptions import exception_handlers as exc
@@ -59,12 +59,13 @@ _app.include_router(router=routers.health)
 _app.include_router(router=routers.files_router)
 _app.include_router(router=routers.users_router)
 _app.include_router(router=routers.workspaces_router)
+_app.include_router(router=routers.tasks_router)
 
 
 v2_app = _app
 logger.info(
     f"V2 link: "
-    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api/v2{v2_app.docs_url}"
+    f"http://{settings.API_HOST}:{settings.API_PORT}/api/v2{v2_app.docs_url}"
 )
 
 if __name__ == "__main__":
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     logger.info("V2 started")
     logger.info(f"V2 link: " f"http://0.0.0.0:8762/api/v2{v2_app.docs_url}")
     uvicorn.run(
-        "app:v2_app",
+        app=v2_app,
         host="0.0.0.0",
         port=8762,
         log_config=None,

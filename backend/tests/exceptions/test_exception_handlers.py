@@ -11,7 +11,7 @@ from backend.exceptions import (
 from backend.loguru_logger import logger_setup
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
-from backend.config import settings
+from backend.api.config import settings
 
 logger_setup(settings)
 

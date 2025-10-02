@@ -1,7 +1,8 @@
 import uvicorn
-from loguru import logger
+from backend.api.app import app
+import asyncio
 
-from backend.config import settings
+from backend.api.config import settings
 
 if __name__ == "__main__":
     """
@@ -10,23 +11,29 @@ if __name__ == "__main__":
         (including gunicorn) using something like:
     from manage import app then the value is 'app' or 'manage.app'
     """
-    host: str = "0.0.0.0"
-    port: int = 8765
-    logger.info("App is loading!")
-    logger.info("Started server process")
-    logger.info("Waiting for application startup.")
-    uvicorn.run(
-        "app:app",
-        host=settings.APP_HOST,
-        port=settings.APP_PORT,
+    config = uvicorn.Config(
+        app=app,
+        host=settings.API_HOST,
+        port=settings.API_PORT,
         log_config=None,
         access_log=False,
-        # log_level="critical"
-        # reload=True,
     )
+    server = uvicorn.Server(config)
+    asyncio.run(server.serve())  # no loop_factory here
 
 
 # sudo lsof -i tcp:8765
 # kill -15 (its soft) PID
 # kill -9 (hardcore) PID
 # lsof -i -P | grep :$PORT
+
+
+# uvicorn.run(
+#     app=app,
+#     host=settings.API_HOST,
+#     port=settings.API_PORT,
+#     log_config=None,
+#     access_log=False,
+#     # log_level="critical"
+#     # reload=True,
+# )

@@ -1,5 +1,4 @@
 import time
-import typing
 import uuid
 from contextlib import asynccontextmanager
 
@@ -9,15 +8,27 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from backend.loguru_logger import logger_setup
+from backend.api.config import settings
 from backend.api import v1_app, v2_app
 from backend.api.health_check import health_router
-from backend.loguru_logger.log_config import logger_setup
-from backend.config import settings
+from backend.rabbit import init_rabbit, declare_queues
+
+
+logger_setup(settings)
 
 
 @asynccontextmanager
-async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
-    logger_setup(settings)
+async def lifespan(func_app: FastAPI):
+    # logger_setup(settings)
+    logger.info("Starting lifespan processes...")
+    _conn, _ch = await init_rabbit(settings=settings)
+    await declare_queues(channel=_ch, settings=settings)
+    # Store in the app state for health checks or shutdown handling
+    # func_app.state.rabbit_connection = _conn
+    # func_app.state.rabbit_channel = _ch
+    v2_app.state.rabbit_connection = _conn
+    v2_app.state.rabbit_channel = _ch
     yield
 
 
@@ -82,7 +93,7 @@ v2_app.include_router(health_router)
 _app.mount(path="/api", app=v2_app)
 logger.info("Application startup complete.")
 app_link: str = (
-    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api{_app.docs_url}"
+    f"http://{settings.API_HOST}:{settings.API_PORT}/api{_app.docs_url}"
 )
 logger.info(f"Uvicorn running on {app_link} (Press CTRL+C to quit)")
 

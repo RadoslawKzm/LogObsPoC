@@ -3,36 +3,27 @@ import sys
 import pydantic_settings
 from asgi_correlation_id import correlation_id
 from loguru import logger
+from backend.loguru_logger.safe_log import safe_log
 
 
 # -- Filters & formats --
 
 
 def correlation_id_filter(record: dict) -> bool:
-    corr_id = correlation_id.get() or "No correlation_id"
-    record["extra"]["correlation_id"] = corr_id
+    if "correlation_id" not in record["extra"]:
+        corr_id = correlation_id.get() or "No correlation_id"
+        record["extra"]["correlation_id"] = corr_id
     return True
-
-
-# HUMAN_FORMAT: str = (
-#     "<level>{level: <8}</level>"
-#     " | <green>{extra[correlation_id]}</green>"
-#     " | <black>{time:YYYY-MM-DD HH:mm:ss.SSS}</black>"
-#     " | <cyan>{name}</cyan>:<black>{function}</black>:<cyan>{line}</cyan> - "
-#     "<level>{message}</level>"
-# )
 
 
 def human_readable_format(record):
     level = record["level"].name.ljust(8)
     corr_id = record["extra"].get("correlation_id", "No correlation_id")
-    time = record["time"].strftime("%Y-%m-%d %H:%M:%S.%f")[
-        :-3
-    ]  # milliseconds precision
+    time = record["time"].strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # ms precision
     name = record["name"]
-    function = record["function"]
+    function = safe_log(record["function"])
     line = record["line"]
-    message = record["message"]
+    message = safe_log(record["message"])
     return (
         f"<level>{level}</level> | "
         f"<green>{corr_id}</green> | "
@@ -74,10 +65,10 @@ def setup_file_human_logger(settings: pydantic_settings.BaseSettings):
 
 
 #
-# def setup_safe_json_logger(settings: pydantic_settings.BaseSettings):
+# def setup_safe_json_logger(worker_settings: pydantic_settings.BaseSettings):
 #     logger.add(
 #         "logs/safe.json",
-#         level=settings.LOG_LEVEL,
+#         level=worker_settings.LOG_LEVEL,
 #         format="{message}",
 #         filter=correlation_id_filter,
 #         rotation="1 hour",
@@ -89,10 +80,10 @@ def setup_file_human_logger(settings: pydantic_settings.BaseSettings):
 #     )
 #
 #
-# def setup_unsafe_json_logger(settings: pydantic_settings.BaseSettings):
+# def setup_unsafe_json_logger(worker_settings: pydantic_settings.BaseSettings):
 #     logger.add(
 #         "logs/unsafe.json",
-#         level=settings.LOG_LEVEL,
+#         level=worker_settings.LOG_LEVEL,
 #         format="{message}",
 #         filter=correlation_id_filter,
 #         rotation="1 hour",
@@ -138,8 +129,8 @@ def logger_setup(settings: pydantic_settings.BaseSettings):
 
     setup_console_human_logger(settings)
     setup_file_human_logger(settings)
-    # setup_safe_json_logger(settings)
-    # setup_unsafe_json_logger(settings)
+    # setup_safe_json_logger(worker_settings)
+    # setup_unsafe_json_logger(worker_settings)
 
 
 # -- Log level docs for reference (optional) --

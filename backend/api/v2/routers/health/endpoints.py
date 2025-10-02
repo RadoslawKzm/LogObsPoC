@@ -2,7 +2,7 @@ import random
 
 import fastapi
 
-from . import response_examples
+from . import examples
 
 health_router = fastapi.APIRouter(prefix="/health", tags=["Health"])
 
@@ -10,7 +10,7 @@ health_router = fastapi.APIRouter(prefix="/health", tags=["Health"])
 @health_router.get(
     "/",
     status_code=200,
-    responses=response_examples.response_200,
+    responses=examples.response.success,
 )
 async def health() -> dict:
     responses = [

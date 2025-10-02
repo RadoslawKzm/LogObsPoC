@@ -10,8 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from backend.loguru_logger.log_config import logger_setup
-from backend.config import settings
-
+from backend.api.config import settings
 from . import routers
 from backend.exceptions import exception_handlers as exc
 
@@ -60,7 +59,7 @@ _app.include_router(router=routers.delay)
 v1_app = _app
 logger.info(
     f"V1 link: "
-    f"http://{settings.APP_HOST}:{settings.APP_PORT}/api/v1{v1_app.docs_url}"
+    f"http://{settings.API_HOST}:{settings.API_PORT}/api/v1{v1_app.docs_url}"
 )
 
 
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     """
     logger.info("V1 started")
     uvicorn.run(
-        "app:v1_app",
+        app=v1_app,
         host="0.0.0.0",
         port=8761,
         log_config=None,

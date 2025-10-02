@@ -10,7 +10,6 @@ from backend.database.postgres import PostgresSessionManager
 from backend.database.config import pg_config
 from backend.database.postgres.models import tables
 from backend.exceptions import db_exceptions
-from backend.loguru_logger import safe_log
 
 COLUMN_NAME = str
 COLUMN_VALUE = str
@@ -91,7 +90,7 @@ class PostgresImplementation(DatabaseInterface):
         except Exception as exc:
             exc = db_exceptions.sql.AddRecordError
             msg: str = f"Record: {data.model_dump()}"
-            raise exc(internal_message=f"{exc} {safe_log(msg)}") from exc
+            raise exc(internal_message=f"{exc} {msg}") from exc
         return db_record
 
     async def add_many_records(

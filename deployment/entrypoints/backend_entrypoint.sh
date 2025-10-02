@@ -8,9 +8,10 @@ cd /backend/api
 gunicorn api.app:app \
   --workers 2 \
   --worker-class uvicorn.workers.UvicornWorker \
-  --bind 0.0.0.0:$APP_PORT \
-  --log-level debug \
-  --config /backend/gunicorn_conf.py
+  --bind 0.0.0.0:8765 \
+  --log-level warning \
+  --access-logfile /dev/null \
+  --config /deployment/entrypoints/gunicorn_conf.py
 
 
 # gunicorn app:app \
