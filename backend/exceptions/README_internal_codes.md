@@ -169,7 +169,7 @@ External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Critical configuration value missing or invalid._
 #### <a id='code-3003'></a> `3003` ResourceConflictError
 External message: Internal server error. Our team has been notified.<br>
-_Probable cause: Conflict with current resource state due to concurrency or version mismatch._
+_Probable cause: Conflict with current resource state.Possibly due to concurrency or version mismatch._
 #### <a id='code-3004'></a> `3004` ExternalServiceError
 External message: Internal server error. Our team has been notified.<br>
 _Probable cause: Failed communication with an upstream dependency._

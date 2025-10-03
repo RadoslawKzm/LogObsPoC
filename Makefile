@@ -142,7 +142,117 @@ down-db-v:
 	@${MAKE} down-postgres-v
 	@${MAKE} down-rabbit-v
 	@echo "DB environment stopped successfully"
+### ----- DATABASES ----- ###
+###############################################################################
 
+###############################################################################
+### ----- OBSERVABILITY ----- ###
+.PHONY: build-obs
+build-obs:
+	@echo "Building Observability environment..."
+	@${MAKE} build-loki
+	@${MAKE} build-promtail
+	@${MAKE} build-grafana
+.PHONY: up-obs
+up-obs:
+	@echo "Starting Observability environment..."
+	@${MAKE} down-obs
+	@${MAKE} build-obs
+	@${MAKE} up-loki
+	@${MAKE} up-promtail
+	@${MAKE} up-grafana
+	@echo "Observability environment started successfully"
+.PHONY: down-obs
+down-obs:
+	@echo "Stopping Observability environment..."
+	@${MAKE} down-grafana
+	@${MAKE} down-promtail
+	@${MAKE} down-loki
+	@echo "Observability environment stopped successfully"
+.PHONY: down-obs-v
+down-obs-v:
+	@echo "Stopping Observability environment..."
+	@${MAKE} down-grafana-v
+	@${MAKE} down-promtail-v
+	@${MAKE} down-loki-v
+	@echo "Observability environment stopped successfully"
+
+### ----- GRAFANA ----- ###
+.PHONY: build-grafana
+build-grafana:
+	@echo "Building Grafana environment..."
+	docker compose -f ./deployment/docker-compose.yaml build grafana
+	@echo "Grafana environment built successfully"
+.PHONY: up-grafana
+up-grafana:
+	@echo "Starting Grafana environment..."
+	docker compose -f ./deployment/docker-compose.yaml up -d grafana
+	@echo "Grafana environment started successfully"
+.PHONY: down-grafana
+down-grafana:
+	@echo "Stopping Grafana environment..."
+	docker compose -f ./deployment/docker-compose.yaml stop grafana
+	docker compose -f ./deployment/docker-compose.yaml rm -f grafana
+	@echo "Grafana environment stopped successfully"
+.PHONY: down-grafana-v
+down-grafana-v:
+	@echo "Stopping and removing Grafana with volumes..."
+	docker compose -f ./deployment/docker-compose.yaml down -v grafana
+	rm -rf ./deployment/grafana_data
+	@echo "Grafana and its volumes removed successfully"
+
+### ----- LOKI ----- ###
+.PHONY: build-loki
+build-loki:
+	@echo "Building Loki environment..."
+	docker compose -f ./deployment/docker-compose.yaml build loki
+	@echo "Loki environment built successfully"
+.PHONY: up-loki
+up-loki:
+	@echo "Starting Loki environment..."
+	docker compose -f ./deployment/docker-compose.yaml up -d loki
+	@echo "Loki environment started successfully"
+.PHONY: down-loki
+down-loki:
+	@echo "Stopping Loki environment..."
+	docker compose -f ./deployment/docker-compose.yaml stop loki
+	docker compose -f ./deployment/docker-compose.yaml rm -f loki
+	@echo "Loki environment stopped successfully"
+.PHONY: down-loki-v
+down-loki-v:
+	@echo "Stopping and removing Loki with volumes..."
+	docker compose -f ./deployment/docker-compose.yaml down -v loki
+	rm -rf ./deployment/loki_data
+	@echo "Loki and its volumes removed successfully"
+
+### ----- PROMTAIL ----- ###
+.PHONY: build-promtail
+build-promtail:
+	@echo "Building Promtail environment..."
+	docker compose -f ./deployment/docker-compose.yaml build promtail
+	@echo "Promtail environment built successfully"
+.PHONY: up-promtail
+up-promtail:
+	@echo "Starting Promtail environment..."
+	docker compose -f ./deployment/docker-compose.yaml up -d promtail
+	@echo "Promtail environment started successfully"
+.PHONY: down-promtail
+down-promtail:
+	@echo "Stopping Promtail environment..."
+	docker compose -f ./deployment/docker-compose.yaml stop promtail
+	docker compose -f ./deployment/docker-compose.yaml rm -f promtail
+	@echo "Promtail environment stopped successfully"
+.PHONY: down-promtail-v
+down-promtail-v:
+	@echo "Stopping and removing Promtail with volumes..."
+	docker compose -f ./deployment/docker-compose.yaml down -v promtail
+	rm -rf ./deployment/promtail_data
+	@echo "Promtail and its volumes removed successfully"
+
+
+
+### ----- OBSERVABILITY ----- ###
+###############################################################################
 
 #
 #
