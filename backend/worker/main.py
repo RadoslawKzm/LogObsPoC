@@ -1,7 +1,8 @@
-import uvicorn
-from backend.worker import app
 import asyncio
 
+import uvicorn
+
+from backend.worker import app
 from backend.worker.config import worker_settings
 
 if __name__ == "__main__":
@@ -20,7 +21,6 @@ if __name__ == "__main__":
     )
     server = uvicorn.Server(config)
     asyncio.run(server.serve())  # no loop_factory here
-
 
 
 # sudo lsof -i tcp:8765

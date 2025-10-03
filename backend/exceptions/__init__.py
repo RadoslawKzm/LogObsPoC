@@ -1,13 +1,13 @@
 import pathlib
-from .generate_docs import build_readme
 
-from ._0_500_base import BaseCustomError
 from . import _1xxx_auth as auth_exceptions
 from . import _2xxx_api as api_exceptions
 from . import _3xxx_core as core_exceptions
 from . import _4xxx_db as db_exceptions
 from . import _5xxx_cloud as cloud_exceptions
+from ._0_500_base import BaseCustomError
 from .exception_handlers import add_exception_handlers
+from .generate_docs import build_readme
 
 __all__ = [
     api_exceptions,

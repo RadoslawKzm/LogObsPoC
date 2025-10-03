@@ -25,7 +25,10 @@ class ConfigurationError(CoreError):
 class ResourceConflictError(CoreError):
     http_code = fastapi.status.HTTP_409_CONFLICT
     internal_code = 3003
-    internal_message = "Conflict with current resource state due to concurrency or version mismatch."
+    internal_message = (
+        "Conflict with current resource state."
+        "Possibly due to concurrency or version mismatch."
+    )
 
 
 class ExternalServiceError(CoreError):

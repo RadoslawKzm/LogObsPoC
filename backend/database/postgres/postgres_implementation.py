@@ -1,13 +1,12 @@
 import typing
 
-
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import SQLModel, create_engine, select, delete
+from sqlmodel import SQLModel, create_engine, delete, select
 
+from backend.database.config import pg_config
 from backend.database.interface import DatabaseInterface
 from backend.database.postgres import PostgresSessionManager
-from backend.database.config import pg_config
 from backend.database.postgres.models import tables
 from backend.exceptions import db_exceptions
 
@@ -87,7 +86,7 @@ class PostgresImplementation(DatabaseInterface):
             self.session.add(db_record)
             await self.session.commit()
             await self.session.refresh(db_record)
-        except Exception as exc:
+        except Exception:
             exc = db_exceptions.sql.AddRecordError
             msg: str = f"Record: {data.model_dump()}"
             raise exc(internal_message=f"{exc} {msg}") from exc
@@ -163,7 +162,7 @@ class PostgresImplementation(DatabaseInterface):
     @classmethod
     def init_db(cls):
         """
-        Initialize Postgres database:
+        Initialize a Postgres database:
         - Create all tables defined with SQLModel if they don't exist.
         """
         engine = create_engine(pg_config.sync_url, echo=False)

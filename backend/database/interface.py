@@ -5,14 +5,14 @@ import typing
 from collections.abc import AsyncGenerator, Callable
 from typing import ClassVar, Literal, overload
 
-import fastapi
+from fastapi import Depends
 
 if typing.TYPE_CHECKING:
     from backend.database import (
+        FileStorageImplementation,
         MockImplementation,
         MongoImplementation,
         PostgresImplementation,
-        FileStorageImplementation,
     )
 
     _ = PostgresImplementation
@@ -32,7 +32,7 @@ class DatabaseInterface(abc.ABC):
     database_name: str
     session_factory = None
     _registry: ClassVar[dict[str, type[DatabaseInterface]]] = {}
-    sessions = {}
+    sessions: typing.ClassVar[dict] = {}
     """This is ABC class with registry pattern implementation.
     To use in code:
     `DatabaseInterface["SQL"].add_record(record="test")`
@@ -49,9 +49,7 @@ class DatabaseInterface(abc.ABC):
         cls.init_db()
         cls.sessions[cls.database_name.lower()] = typing.Annotated[
             f"{cls.database_name}Implementation",
-            fastapi.Depends(
-                DatabaseInterface.get_db_impl(db_name=cls.database_name)
-            ),
+            Depends(DatabaseInterface.get_db_impl(db_name=cls.database_name)),
         ]
 
     @abc.abstractmethod
@@ -87,12 +85,12 @@ class DatabaseInterface(abc.ABC):
     def get_session(cls, *, db_name: str) -> ABC_TYPE:
         return cls.sessions[db_name.lower()]
 
-    @classmethod
+    @classmethod  # noqa: B027
     def init_db(cls):
         """
-        Initialize database:
+        Initialize a database:
         - Create all tables/collections defined if they don't exist.
-        - If not applicable don't create implementation for init_db.
+        - If not applicable, don't create an implementation for init_db.
         """
         pass
 
@@ -199,15 +197,6 @@ class DatabaseInterface(abc.ABC):
         """
 
 
-PG_SESSION = typing.Annotated[
-    "PostgresImplementation",
-    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="Postgres")),
-]
-MONGO_SESSION = typing.Annotated[
-    "MongoImplementation",
-    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="Mongo")),
-]
-FS_SESSION = typing.Annotated[
-    "FileStorageImplementation",
-    fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
-]
+PG_SESSION = Depends(DatabaseInterface.get_db_impl(db_name="Postgres"))
+MONGO_SESSION = Depends(DatabaseInterface.get_db_impl(db_name="Mongo"))
+FS_SESSION = Depends(DatabaseInterface.get_db_impl(db_name="FileStorage"))

@@ -1,14 +1,22 @@
+import typing
+
 import fastapi
+
 from backend.database import PG_SESSION
 from backend.exceptions import api_exceptions
-from . import examples
 
-from . import Workspace, WorkspacesPageResponse, Page, WorkspaceUpdate
-
+from . import (
+    Page,
+    Workspace,
+    WorkspacesPageResponse,
+    WorkspaceUpdate,
+)
 
 workspaces_router = fastapi.APIRouter(
     prefix="/workspaces", tags=["Workspaces"]
 )
+if typing.TYPE_CHECKING:
+    from backend.database import PostgresImplementation
 
 
 @workspaces_router.get(
@@ -17,7 +25,7 @@ workspaces_router = fastapi.APIRouter(
     # responses=examples.response.workspaces_get_workspace,
 )
 async def get_workspace(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     workspace_id: str = fastapi.Path(..., example="1"),
 ) -> Workspace:
     result: Workspace = await pg_db.get_record(
@@ -38,7 +46,7 @@ async def get_workspace(
     # responses=examples.response.workspaces_get_many_workspaces,
 )
 async def get_many_workspaces(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     page_num: int = fastapi.Query(
         1,
         ge=1,
@@ -84,12 +92,9 @@ async def get_many_workspaces(
     "/{workspace_id}", status_code=fastapi.status.HTTP_200_OK
 )
 async def update_workspace(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     workspace_id: str = fastapi.Path(..., example="workspace_1"),
-    workspace: WorkspaceUpdate = fastapi.Body(
-        ...,
-        # openapi_examples=examples.request.workspaces,
-    ),
+    workspace: WorkspaceUpdate = fastapi.Body(...),  # noqa: B008
 ) -> Workspace:
     existing_workspace: Workspace = await pg_db.get_record(
         key="workspace_id",
@@ -115,7 +120,7 @@ async def update_workspace(
     # responses=examples.response.workspaces_delete_workspace,
 )
 async def delete_workspace(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     workspace_id: str = fastapi.Path(..., example="workspace_1"),
 ):
     result = await pg_db.delete_record(
@@ -136,11 +141,8 @@ async def delete_workspace(
     # responses=examples.response.workspaces_create_workspace,
 )
 async def create_workspace(
-    pg_db: PG_SESSION,
-    workspace: Workspace = fastapi.Body(
-        ...,
-        # openapi_examples=examples.request.workspaces,
-    ),
+    pg_db: "PostgresImplementation" = PG_SESSION,
+    workspace: Workspace = fastapi.Body(...),  # noqa: B008
 ) -> Workspace:
     new_workspace: Workspace = await pg_db.add_record(
         place="workspaces",

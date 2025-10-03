@@ -1,4 +1,5 @@
 import pydantic
+
 from backend.api.v2.routers.models import Page
 
 

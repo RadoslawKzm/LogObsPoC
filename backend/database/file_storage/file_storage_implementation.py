@@ -3,9 +3,9 @@ import typing
 
 from loguru import logger
 
-from backend.exceptions import db_exceptions
-from backend.database.interface import DatabaseInterface
 from backend.database.file_storage import FileStorageSessionManager
+from backend.database.interface import DatabaseInterface
+
 from .models import Record
 
 CURRENT_FILE = pathlib.Path(__file__).parent
@@ -15,10 +15,7 @@ FILE_NAME = str
 CONTENT = bytes
 
 
-def _get_file_path(
-    *,
-    filename: str
-) -> pathlib.Path | bool:
+def _get_file_path(*, filename: str) -> pathlib.Path | bool:
     """Get the full path of a file in the data folder.
 
     Args:
@@ -102,7 +99,6 @@ class FileStorageImplementation(DatabaseInterface):
         for record in records:
             result: Record = await self.get_record(
                 record=record,
-
             )
             results[result.filename] = result.content
         return results
@@ -201,7 +197,6 @@ class FileStorageImplementation(DatabaseInterface):
             result: Record = await self.add_record(
                 record=record,
                 overwrite=overwrite,
-
             )
             results[record.filename] = result.content
         return results
@@ -277,7 +272,6 @@ class FileStorageImplementation(DatabaseInterface):
             result: Record = await self.update_record(
                 record=record,
                 append=append,
-
             )
             results[result.filename] = result.content
         return results
@@ -342,7 +336,6 @@ class FileStorageImplementation(DatabaseInterface):
         for record in records:
             result: Record = await self.delete_record(
                 record=record,
-
             )
             results[result.filename] = result.content
         return results

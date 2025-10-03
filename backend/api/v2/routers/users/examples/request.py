@@ -4,7 +4,7 @@ project_id: dict[str, dict[str, str]] = {
 }
 
 
-users: dict[str, dict[str, str | dict[str, str]]] = {
+users: dict = {
     "user_2137": {
         "summary": "A totally normal example",
         "description": "A **normal** user works correctly.",

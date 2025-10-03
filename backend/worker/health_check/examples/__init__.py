@@ -1,2 +1,1 @@
-from . import request
-from . import response
+from . import request, response

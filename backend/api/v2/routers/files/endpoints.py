@@ -1,11 +1,12 @@
+import io
+import typing
+import zipfile
+
 import fastapi
 from fastapi.responses import StreamingResponse
 from loguru import logger
-import typing
-import io, zipfile
 
-# from . import response_examples
-from backend.database import DatabaseInterface
+from backend.database import FS_SESSION
 from backend.database.file_storage import Record
 
 files_router = fastapi.APIRouter(prefix="/files", tags=["Files"])
@@ -18,10 +19,7 @@ CONTENT = bytes
 
 @files_router.get("/file-names")
 async def get_file_names(
-    file_storage: typing.Annotated[
-        "FileStorageImplementation",
-        fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
-    ],
+    file_storage: "FileStorageImplementation" = FS_SESSION,
     start: int = fastapi.Query(
         default=0,
         ge=0,
@@ -40,10 +38,7 @@ async def get_file_names(
 
 @files_router.get("/", status_code=fastapi.status.HTTP_200_OK)
 async def get_files(
-    file_storage: typing.Annotated[
-        "FileStorageImplementation",
-        fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
-    ],
+    file_storage: "FileStorageImplementation" = FS_SESSION,
     filenames: str | None = fastapi.Query(
         default=None,
         description="Comma-separated list of filenames to fetch",
@@ -65,8 +60,8 @@ async def get_files(
     """Get files. Returns a downloadable ZIP with files.
 
     Retrieves records from file storage.
-    If `filenames` is provided, only those are fetched.
-    Otherwise, returns paginated list of records.
+    If `filenames` are provided, only those are fetched.
+    Otherwise, returns a paginated list of records.
 
     <!--
     Internal developer notes, not visible in Swagger.
@@ -102,22 +97,17 @@ async def get_files(
 # # ADD many files (multipart/form-data)
 @files_router.post("/", status_code=fastapi.status.HTTP_201_CREATED)
 async def add_many_files(
-    files: list[fastapi.UploadFile] = fastapi.File(...),
-    file_storage: "FileStorageImplementation" = fastapi.Depends(
-        DatabaseInterface.get_db_impl(db_name="FileStorage")
-    ),
+    files: list[fastapi.UploadFile] = fastapi.File(...),  # noqa: B008
+    file_storage: "FileStorageImplementation" = FS_SESSION,
 ) -> dict[FILE_NAME, bool]:
     data = [Record(filename=f.filename, content=f.file.read()) for f in files]
     return await file_storage.add_many_records(records=data)
 
 
-# DELETE many files by filename list
+# DELETE many files by a filename list
 @files_router.delete("/")
 async def delete_many_files(
-    file_storage: typing.Annotated[
-        "FileStorageImplementation",
-        fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
-    ],
+    file_storage: "FileStorageImplementation" = FS_SESSION,
     filenames: str = fastapi.Query(
         description="Comma-separated list of filenames to fetch",
         example="sample_0.pdf,sample_1.pdf",
@@ -128,12 +118,9 @@ async def delete_many_files(
 
 
 @files_router.delete("/json")
-async def delete_many_files(
-    file_storage: typing.Annotated[
-        "FileStorageImplementation",
-        fastapi.Depends(DatabaseInterface.get_db_impl(db_name="FileStorage")),
-    ],
-    filenames: list[FILE_NAME] = fastapi.Body(
+async def delete_many_files_json(
+    file_storage: "FileStorageImplementation" = FS_SESSION,
+    filenames: list[FILE_NAME] = fastapi.Body(  # noqa: B008
         ...,
         description="JSON list of filenames to delete",
         min_length=1,

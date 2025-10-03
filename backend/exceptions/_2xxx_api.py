@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 
 from ._0_500_base import BaseCustomError
@@ -10,7 +12,7 @@ class ApiError(BaseCustomError):
     external_message = "Internal server error. Our team has been notified."
     internal_message = "General API error."
 
-    _api_errors = {}
+    _api_errors: typing.ClassVar[dict] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)

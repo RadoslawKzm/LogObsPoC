@@ -1,8 +1,11 @@
-from .task import process_task, TASK_REGISTRY
 import json
-from loguru import logger
+
 import aio_pika
+from loguru import logger
+
 from backend.worker.config import worker_settings
+
+from .task import TASK_REGISTRY
 
 
 async def callback(message: aio_pika.IncomingMessage):
@@ -21,7 +24,7 @@ async def callback(message: aio_pika.IncomingMessage):
                 logger.info(f"Dispatching task {task_obj}: {task}")
                 await task_obj(task)
             except Exception as e:
-                logger.error(f"Error processing task: {str(e)}", exc_info=True)
+                logger.error(f"Error processing task: {e!s}", exc_info=True)
                 # Message will be requeued automatically if exception occurs
 
 

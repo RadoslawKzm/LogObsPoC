@@ -2,6 +2,7 @@ import fastapi
 
 from ._0_500_base import BaseCustomError
 
+
 # === 1xxx Authentication / Authorization (HTTP4xx) ===
 # Base class for all authentication/authorization errors
 class AuthError(BaseCustomError):

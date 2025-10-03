@@ -1,1 +1,1 @@
-from .main import init_rabbit, declare_queues
+from .main import declare_queues, init_rabbit

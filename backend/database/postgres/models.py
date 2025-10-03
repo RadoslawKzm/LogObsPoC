@@ -1,12 +1,10 @@
-from typing import Optional, List
-
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     user_id: str = Field(index=True, unique=True)
     name: str = Field(index=True)
     email: str = Field(index=True)
@@ -15,7 +13,7 @@ class User(SQLModel, table=True):
         back_populates="owner",
         cascade_delete=True,  # for python cascade delete
     )
-    files: List["File"] = Relationship(
+    files: list["File"] = Relationship(
         back_populates="owner",
         cascade_delete=True,  # for python cascade delete
     )
@@ -24,18 +22,18 @@ class User(SQLModel, table=True):
 class Workspace(SQLModel, table=True):
     __tablename__ = "workspaces"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     workspace_id: str = Field(index=True, unique=True)
     name: str = Field(index=True)
 
     user_id: str = Field(foreign_key="users.user_id", ondelete="CASCADE")
-    owner: Optional[User] = Relationship(back_populates="workspaces")
+    owner: User | None = Relationship(back_populates="workspaces")
 
 
 class File(SQLModel, table=True):
     __tablename__ = "files"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(default=None, primary_key=True)
     file_id: str = Field(index=True, unique=True)
     name: str
     url: str
@@ -43,7 +41,7 @@ class File(SQLModel, table=True):
     type: str
 
     user_id: str = Field(foreign_key="users.user_id", ondelete="CASCADE")
-    owner: Optional[User] = Relationship(back_populates="files")
+    owner: User | None = Relationship(back_populates="files")
 
 
 tables: dict[str, type[SQLModel]] = {
@@ -54,8 +52,9 @@ tables: dict[str, type[SQLModel]] = {
 
 if __name__ == "__main__":
     # need to comment out postgres implementation in init
-    from backend.database.config import pg_config
     from sqlmodel import Session, create_engine
+
+    from backend.database.config import pg_config
 
     # Create a sync engine
     engine = create_engine(pg_config.sync_url)

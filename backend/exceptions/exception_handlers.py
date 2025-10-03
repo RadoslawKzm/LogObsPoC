@@ -6,15 +6,12 @@ from fastapi.requests import Request
 from fastapi.responses import JSONResponse, ORJSONResponse
 from loguru import logger
 
-from backend.loguru_logger import safe_log
-
 from . import BaseCustomError
+from ._1xxx_auth import AuthError
 from ._2xxx_api import ApiError
+from ._3xxx_core import CoreError
 from ._4xxx_db import DbError
 from ._5xxx_cloud import CloudError
-from ._3xxx_core import CoreError
-from ._1xxx_auth import AuthError
-
 
 if typing.TYPE_CHECKING:
     from loguru import Logger

@@ -1,12 +1,16 @@
+import typing
+
 import fastapi
+
 from backend.database import PG_SESSION
 from backend.exceptions import api_exceptions
-from . import examples
 
-from . import User, UsersPageResponse, Page, UserUpdate
-
+from . import Page, User, UsersPageResponse, UserUpdate, examples
 
 users_router = fastapi.APIRouter(prefix="/users", tags=["Users"])
+
+if typing.TYPE_CHECKING:
+    from backend.database import PostgresImplementation
 
 
 @users_router.get(
@@ -15,7 +19,7 @@ users_router = fastapi.APIRouter(prefix="/users", tags=["Users"])
     responses=examples.response.users_get_user,
 )
 async def get_user(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     user_id: str = fastapi.Path(..., example="user_1"),
 ) -> User:
     result: User = await pg_db.get_record(
@@ -34,7 +38,7 @@ async def get_user(
     responses=examples.response.users_get_many_users,
 )
 async def get_many_users(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     page_num: int = fastapi.Query(
         1,
         ge=1,
@@ -49,16 +53,13 @@ async def get_many_users(
     request: fastapi.Request = None,
 ) -> UsersPageResponse:
     """
-    Fetch paginated list of users.
+    Fetch a paginated list of users.
     """
     users: list[User] = await pg_db.get_many_records(
         page_num=page_num,
         page_size=page_size,
         place="users",
     )
-    # if not users:
-    #     raise api_exceptions.NotFoundError("No users found")
-
     next_page = None
     if len(users) == page_size + 1:
         # Check if next page is available.
@@ -66,7 +67,6 @@ async def get_many_users(
         base_url = str(request.url_for("get_many_users"))
         next_page = f"{base_url}?page={page_num+1}&page_size={page_size}"
         users = users[:-1]
-
     page: Page = Page(
         page_num=page_num,
         page_size=page_size,
@@ -78,10 +78,11 @@ async def get_many_users(
 
 @users_router.patch("/{user_id}", status_code=fastapi.status.HTTP_200_OK)
 async def update_user(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     user_id: str = fastapi.Path(..., example="user_1"),
-    user: UserUpdate = fastapi.Body(
-        ..., openapi_examples=examples.request.users
+    user: UserUpdate = fastapi.Body(  # noqa: B008
+        ...,
+        openapi_examples=examples.request.users,
     ),
 ) -> User:
     existing_user: User = await pg_db.get_record(
@@ -106,7 +107,7 @@ async def update_user(
     responses=examples.response.users_delete_user,
 )
 async def delete_user(
-    pg_db: PG_SESSION,
+    pg_db: "PostgresImplementation" = PG_SESSION,
     user_id: str = fastapi.Path(..., example="user_1"),
 ):
     result = await pg_db.delete_record(
@@ -125,8 +126,8 @@ async def delete_user(
     responses=examples.response.users_create_user,
 )
 async def create_user(
-    pg_db: PG_SESSION,
-    user: User = fastapi.Body(
+    pg_db: "PostgresImplementation" = PG_SESSION,
+    user: User = fastapi.Body(  # noqa: B008
         ...,
         openapi_examples=examples.request.users,
     ),

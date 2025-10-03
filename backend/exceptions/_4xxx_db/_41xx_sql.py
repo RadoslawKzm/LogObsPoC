@@ -3,7 +3,7 @@ import fastapi
 from ._4000_base import DbError
 
 
-# === 41xx SQL Errors (HTTP 5xx) ===============================================
+# === 41xx SQL Errors =========================================================
 class SQLError(DbError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 4100

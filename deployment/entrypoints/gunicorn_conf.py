@@ -9,7 +9,8 @@ class InterceptHandler(logging.Handler):
             level = logger.level(record.levelname).name
         except ValueError:
             level = record.levelno
-        logger.opt(exception=record.exc_info).log(level, record.getMessage())
+        if level in {"WARNING", "ERROR", "CRITICAL"}:
+            logger.opt(exception=record.exc_info).log(level, record.getMessage())
 
 
 # Remove default handlers

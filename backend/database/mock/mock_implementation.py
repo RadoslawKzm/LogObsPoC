@@ -2,9 +2,9 @@ import typing
 
 from loguru import logger
 
-from backend.exceptions import db_exceptions
 from backend.database.interface import DatabaseInterface
 from backend.database.mock import MockSessionManager
+from backend.exceptions import db_exceptions
 
 from .database import books
 

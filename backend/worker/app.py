@@ -1,8 +1,8 @@
+import asyncio
+import contextlib
 import time
 import typing
 import uuid
-import contextlib
-import asyncio
 
 import fastapi
 from asgi_correlation_id import CorrelationIdMiddleware
@@ -10,16 +10,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from backend.worker.health_check import health_router
 from backend.loguru_logger.log_config import logger_setup
+from backend.rabbit import init_rabbit
 from backend.worker.config import worker_settings
 from backend.worker.core.main import rabbit_worker
-from backend.rabbit import init_rabbit
-
+from backend.worker.health_check import health_router
 
 logger.info("App is loading!")
 logger.info("Waiting for application startup.")
-
 
 
 @contextlib.asynccontextmanager
@@ -55,6 +53,7 @@ async def lifespan(func_app: FastAPI) -> typing.AsyncContextManager[None]:
         pass
 
     await conn.close()
+
 
 _app = FastAPI(lifespan=lifespan, root_path="/api")
 

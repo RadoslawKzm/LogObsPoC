@@ -5,3 +5,4 @@
 **/logs/
 **/.env
 /deployment/rabbitmq_data/
+/backend/database/file_storage/script.py

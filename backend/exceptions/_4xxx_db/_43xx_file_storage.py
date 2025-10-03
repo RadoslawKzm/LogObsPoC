@@ -1,10 +1,12 @@
 import fastapi
+
 from ._4000_base import DbError
 
 
-# === 43xx FileStorage Errors (HTTP 5xx / 4xx) =================================
+# === 43xx FileStorage Errors =================================================
 class FileStorageError(DbError):
     """Base exception for all file storage errors."""
+
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 4300
     internal_message = (
@@ -40,7 +42,9 @@ class FileWriteError(FileStorageError):
 class FileUpdateError(FileStorageError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 4305
-    internal_message = "Error occurred while updating or appending content to the file."
+    internal_message = (
+        "Error occurred while updating or appending content to the file."
+    )
 
 
 class FileDeleteError(FileStorageError):
@@ -52,4 +56,6 @@ class FileDeleteError(FileStorageError):
 class FileListError(FileStorageError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 4307
-    internal_message = "Error occurred while listing files in the data storage folder."
+    internal_message = (
+        "Error occurred while listing files in the data storage folder."
+    )

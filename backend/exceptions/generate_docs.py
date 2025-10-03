@@ -1,3 +1,4 @@
+# ruff: noqa
 from backend import exceptions
 
 
@@ -81,18 +82,24 @@ def prepare_codes_explanation(explanations: list, tree: dict, indent: int = 3):
                 f"{'#' * indent} <a id='code-{err_cls.internal_code}'></a> `{err_cls.internal_code}` {err_cls.__name__}"
             )
             explanations.append(f"General {err_cls.__name__} Base Error.<br>")
-            explanations.append(f"_Probable cause: Unexpected and Uncaught base exception_")
+            explanations.append(
+                "_Probable cause: Unexpected and Uncaught base exception_"
+            )
         else:
             if isinstance(err_cls, dict) and set(err_cls.keys()) == {"object"}:
                 explanations.append(
                     f"{'#' * indent} <a id='code-{err_cls['object'].internal_code}'></a> `{err_cls['object'].internal_code}` {key}"
                 )
-                explanations.append(f"External message: {err_cls['object'].external_message}<br>")
+                explanations.append(
+                    f"External message: {err_cls['object'].external_message}<br>"
+                )
                 explanations.append(
                     f"_Probable cause: {err_cls['object'].internal_message}_"
                 )
             else:
-                explanations.append(f"{'#' * indent} {key.replace('Error', '')} Codes")
+                explanations.append(
+                    f"{'#' * indent} {key.replace('Error', '')} Codes"
+                )
                 if isinstance(err_cls, dict):
                     prepare_codes_explanation(
                         explanations=explanations,

@@ -1,11 +1,13 @@
-import fastapi
-from loguru import logger
-import psutil
 import time
+
+import fastapi
+import psutil
+from loguru import logger
 
 from backend.api.config import settings
 
 health_router = fastapi.APIRouter(prefix="/health-app", tags=["health-app"])
+
 
 def get_cgroup_usage(*, path: str) -> int:
     """Reads a cgroup metric from the specified file."""
@@ -96,7 +98,7 @@ def is_container():
         if not container:
             return False
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 
@@ -155,4 +157,3 @@ async def rabbit(request: fastapi.Request) -> dict:
             detail={"message": "Not connected to RabbitMQ"},
         )
     return {"status": "healthy", "message": "Connected to RabbitMQ"}
-

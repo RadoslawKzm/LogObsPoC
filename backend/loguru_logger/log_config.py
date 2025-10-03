@@ -3,8 +3,8 @@ import sys
 import pydantic_settings
 from asgi_correlation_id import correlation_id
 from loguru import logger
-from backend.loguru_logger.safe_log import safe_log
 
+from backend.loguru_logger.safe_log import safe_log
 
 # -- Filters & formats --
 
@@ -18,18 +18,22 @@ def correlation_id_filter(record: dict) -> bool:
 
 def human_readable_format(record):
     level = record["level"].name.ljust(8)
-    corr_id = record["extra"].get("correlation_id", "No correlation_id")
+    corr_id = record["extra"].pop("correlation_id", "No correlation_id")
     time = record["time"].strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # ms precision
     name = record["name"]
     function = safe_log(record["function"])
     line = record["line"]
     message = safe_log(record["message"])
+    extras = "\n"
+    if record["extra"]:
+        extras = f" - {safe_log(record["extra"])}\n"
     return (
         f"<level>{level}</level> | "
         f"<green>{corr_id}</green> | "
         f"<black>{time}</black> | "
         f"<cyan>{name}</cyan>:<black>{function}</black>:<cyan>{line}</cyan> - "
-        f"<level>{message}</level>\n"
+        f"<level>{message}</level>"
+        f"{extras}"
     )
 
 

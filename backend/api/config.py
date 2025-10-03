@@ -1,5 +1,5 @@
 from enum import Enum
-import typing
+
 from pydantic_settings import BaseSettings
 
 
@@ -68,11 +68,11 @@ class Settings(BaseSettings):
     RABBITMQ_L_QUEUE: str
 
     # Health check
-    CGROUP_CPU_USAGE: typing.Optional[str] = None
-    CGROUP_CPU_QUOTA: typing.Optional[str] = None
-    CGROUP_CPU_PERIOD: typing.Optional[str] = None
-    CGROUP_MEMORY_USAGE: typing.Optional[str] = None
-    CGROUP_MEMORY_LIMIT: typing.Optional[str] = None
+    CGROUP_CPU_USAGE: str | None = None
+    CGROUP_CPU_QUOTA: str | None = None
+    CGROUP_CPU_PERIOD: str | None = None
+    CGROUP_MEMORY_USAGE: str | None = None
+    CGROUP_MEMORY_LIMIT: str | None = None
 
     @property
     def LOG_LEVEL(self) -> str | int:

@@ -1,15 +1,17 @@
-from loguru import logger
 import asyncio
 
-
+from loguru import logger
 
 TASK_REGISTRY = {}
+
 
 def register_task(name):
     def wrapper(func):
         TASK_REGISTRY[name] = func
         return func
+
     return wrapper
+
 
 @register_task("process_task")
 async def process_task(task: dict):
@@ -23,12 +25,13 @@ async def process_task(task: dict):
     logger.info(f"Task {task_id} processed successfully")
     return f"Task {task_id} completed"
 
+
 @register_task("generate_report")
 async def generate_report(task: dict):
     """Simulate heavy computation asynchronously."""
     task_id = task.get("task_id")
     logger.info(f"Processing task {task_id}")
-    logger.info(f"Generating report...")
+    logger.info("Generating report...")
     await asyncio.sleep(30)  # simulate computation without blocking
     logger.info(f"Task {task_id} processed successfully")
     return f"Task {task_id} completed"

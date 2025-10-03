@@ -1,7 +1,8 @@
-import uvicorn
-from backend.api.app import app
 import asyncio
 
+import uvicorn
+
+from backend.api.app import app
 from backend.api.config import settings
 
 if __name__ == "__main__":

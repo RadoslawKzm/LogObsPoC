@@ -2,7 +2,8 @@ import fastapi
 
 from ._5000_base import CloudError
 
-# === 52xx Azure Errors ===
+
+# === 52xx Azure Errors =======================================================
 class AzureError(CloudError):
     http_code = fastapi.status.HTTP_500_INTERNAL_SERVER_ERROR
     internal_code = 5200
@@ -19,4 +20,3 @@ class AzureResourceUnavailableError(AzureError):
     http_code = fastapi.status.HTTP_503_SERVICE_UNAVAILABLE
     internal_code = 5202
     internal_message = "Azure resource could not be reached or is down."
-

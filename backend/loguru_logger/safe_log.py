@@ -1,6 +1,7 @@
-from loguru import logger
 import json
 import traceback
+
+from loguru import logger
 
 
 def safe_log(obj: str | dict) -> str:
@@ -29,5 +30,5 @@ def safe_log(obj: str | dict) -> str:
             )
             raise
     curly_escape = obj.replace("{", "{{").replace("}", "}}")
-    square_escape = curly_escape.replace("<", "\<").replace(">", "\>")
+    square_escape = curly_escape.replace("<", r"\<").replace(">", r"\>")
     return square_escape

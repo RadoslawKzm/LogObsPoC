@@ -1,1 +1,1 @@
-from .models import Workspace, WorkspacesPageResponse, Page, WorkspaceUpdate
+from .models import Page, Workspace, WorkspacesPageResponse, WorkspaceUpdate

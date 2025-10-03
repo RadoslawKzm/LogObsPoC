@@ -1,12 +1,13 @@
-import fastapi
-from loguru import logger
-import pydantic
-import aio_pika
 import json
-from asgi_correlation_id import correlation_id
 
-from backend.loguru_logger import safe_log
+import aio_pika
+import fastapi
+import pydantic
+from asgi_correlation_id import correlation_id
+from loguru import logger
+
 from backend.api.config import settings
+
 from . import examples
 
 tasks_router = fastapi.APIRouter(prefix="/tasks", tags=["Tasks"])
@@ -25,11 +26,8 @@ async def create_task(
     payload: TaskCreate,
     request: fastapi.Request,
 ) -> fastapi.responses.JSONResponse:
-    rabbit_conn = request.app.state.rabbit_connection
     rabbit_ch = request.app.state.rabbit_channel
-
     logger.debug(f"Create task called with user={payload.user}")
-
     # Prepare a fake task
     task_message = {
         "task_id": "example-task-id",
@@ -49,8 +47,7 @@ async def create_task(
         routing_key=settings.RABBITMQ_S_QUEUE,
     )
     logger.info(
-        f"Published dummy task to RabbitMQ. "
-        f"Queue 'tasks': {task_message}"
+        f"Published dummy task to RabbitMQ. " f"Queue 'tasks': {task_message}"
     )
 
     return fastapi.responses.JSONResponse(

@@ -1,3 +1,5 @@
+import typing
+
 import fastapi
 
 
@@ -27,14 +29,14 @@ class BaseCustomError(Exception):
     internal_code: int = 500
     external_message = "Internal server error. Our team has been notified."
     internal_message: str
-    _tree: dict = {}
+    _tree: typing.ClassVar[dict] = {}
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         cls._add_to_tree(cls)
 
     @classmethod
-    def _add_to_tree(cls, new_cls):
+    def _add_to_tree(cls, new_cls):  # noqa: C901
         parent = new_cls.__base__
 
         if not issubclass(new_cls, BaseCustomError) or parent is object:

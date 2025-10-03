@@ -1,4 +1,8 @@
 import pytest
+from fastapi import FastAPI, HTTPException
+from fastapi.testclient import TestClient
+
+from backend.api.config import settings
 from backend.exceptions import (
     BaseCustomError,
     add_exception_handlers,
@@ -9,9 +13,6 @@ from backend.exceptions import (
     db_exceptions,
 )
 from backend.loguru_logger import logger_setup
-from fastapi import FastAPI, HTTPException
-from fastapi.testclient import TestClient
-from backend.api.config import settings
 
 logger_setup(settings)
 
@@ -84,8 +85,6 @@ def test_http_error_handler(test_client):
     assert response["internal_code"] == BaseCustomError.internal_code
 
 
-
-
 def test_api_error_handler(test_client):
     response = test_client.get("/raise-api-error")
     assert response.status_code == 500
@@ -115,7 +114,9 @@ def test_cloud_error_handler(test_client):
     assert response.status_code == 500
     response = response.json()
     assert response["message"] == error_msg
-    assert response["internal_code"] == cloud_exceptions.CloudError.internal_code
+    assert (
+        response["internal_code"] == cloud_exceptions.CloudError.internal_code
+    )
 
 
 def test_db_error_handler(test_client):
@@ -140,4 +141,3 @@ def test_generic_error_handler(test_client):
     response = response.json()
     assert response["message"] == error_msg
     assert response["internal_code"] == BaseCustomError.internal_code
-

@@ -8,12 +8,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from backend.loguru_logger import logger_setup
-from backend.api.config import settings
 from backend.api import v1_app, v2_app
+from backend.api.config import settings
 from backend.api.health_check import health_router
-from backend.rabbit import init_rabbit, declare_queues
-
+from backend.loguru_logger import logger_setup
+from backend.rabbit import declare_queues, init_rabbit
 
 logger_setup(settings)
 
@@ -45,25 +44,25 @@ async def log_requests(request: fastapi.Request, call_next):
         method=request.method,
         path=request.url.path,
     ):
-        logger.log("ENTER", f"IN >> {request.method} {request.url.path}")
+        logger.log(
+            "ENTER",
+            f"IN {request.method}:{request.url.path}",
+        ),
     start = time.perf_counter()
     response = await call_next(request)
     duration = time.perf_counter() - start
-    msg = f"<< OUT {response.status_code}: {duration:.3f}s"
-    with logger.contextualize(
-        method=request.method,
-        path=request.url.path,
-        response_code=response.status_code,
-        duration=duration,
-    ):
-        if 200 <= response.status_code <= 299:
-            logger.log("EXIT 200", msg)
-        elif 300 <= response.status_code <= 399:
-            logger.log("EXIT 300", msg)
-        elif 400 <= response.status_code <= 499:
-            logger.log("EXIT 400", msg)
-        else:  # 500++
-            logger.log("EXIT 500", msg)
+    msg = (
+        f"OUT {request.method}:{request.url.path} | "
+        f"{response.status_code} | {duration:.4f}s"
+    )
+    if 200 <= response.status_code <= 299:
+        logger.log("EXIT 200", msg)
+    elif 300 <= response.status_code <= 399:
+        logger.log("EXIT 300", msg)
+    elif 400 <= response.status_code <= 499:
+        logger.log("EXIT 400", msg)
+    else:  # 500++
+        logger.log("EXIT 500", msg)
     return response
 
 

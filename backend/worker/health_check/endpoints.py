@@ -1,7 +1,8 @@
-import fastapi
-from loguru import logger
-import psutil
 import time
+
+import fastapi
+import psutil
+from loguru import logger
 
 from ..config import worker_settings
 
@@ -97,7 +98,7 @@ def is_container():
         if not container:
             return False
         return True
-    except Exception as e:
+    except Exception:
         return False
 
 
