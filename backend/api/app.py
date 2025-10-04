@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from backend.api import v1_app, v2_app
+from backend.api.auth import auth_router
 from backend.api.config import settings
 from backend.api.health_check import health_router
 from backend.loguru_logger import logger_setup
@@ -82,6 +83,7 @@ _app.add_middleware(
     expose_headers=["X-Request-ID"],
 )
 
+
 logger.info("Starting app")
 logger.info("V1 initializing...")
 _app.mount(path="/api/v1", app=v1_app)
@@ -89,7 +91,9 @@ logger.info("V2 initializing...")
 _app.mount(path="/api/v2", app=v2_app)
 logger.info("LATEST initializing...")
 v2_app.include_router(health_router)
+v2_app.include_router(auth_router)
 _app.mount(path="/api", app=v2_app)
+
 logger.info("Application startup complete.")
 app_link: str = (
     f"http://{settings.API_HOST}:{settings.API_PORT}/api{_app.docs_url}"

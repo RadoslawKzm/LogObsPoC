@@ -56,9 +56,9 @@ def add_exception_handlers(app: FastAPI) -> FastAPI:
         request: Request,
         exc: HTTPException,
     ) -> JSONResponse:
-        logger.log("HTTPExc", "Manual in-code exception was risen.")
-        logger.log("HTTPExc", f"Status code: {exc.status_code}")
-        logger.log("HTTPExc", f"Detail: {exc.detail}")
+        logger.log("Manual HTTPExc", "Manual in-code exception was risen.")
+        logger.log("Manual HTTPExc", f"Status code: {exc.status_code}")
+        logger.log("Manual HTTPExc", f"Detail: {exc.detail}")
         return JSONResponse(
             status_code=exc.status_code,
             content={"message": exc.detail},

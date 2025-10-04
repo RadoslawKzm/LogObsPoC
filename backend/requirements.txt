@@ -7,6 +7,8 @@ httpx
 psycopg2-binary
 python-multipart
 psutil
+pyjwt
+pwdlib[argon2]
 
 # Worker modules
 pydantic-settings

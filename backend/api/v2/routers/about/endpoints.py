@@ -1,9 +1,15 @@
 import fastapi
 from loguru import logger
 
+from backend.api.auth import get_current_user
+
 from . import examples
 
-about_router = fastapi.APIRouter(prefix="/about", tags=["About"])
+about_router = fastapi.APIRouter(
+    prefix="/about",
+    tags=["About"],
+    dependencies=[fastapi.Depends(get_current_user)],
+)
 
 
 @about_router.get(
