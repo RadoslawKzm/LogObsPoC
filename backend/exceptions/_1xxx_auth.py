@@ -34,6 +34,13 @@ class SessionExpiredError(AuthenticationError):
     internal_message = "User session or token has expired."
 
 
+class JwtDecodeError(AuthenticationError):
+    http_code = fastapi.status.HTTP_401_UNAUTHORIZED
+    internal_code = 1103
+    external_message = "Invalid JWT token."
+    internal_message = "Provided JWT token is invalid."
+
+
 # === 12xx Authorization Errors ===
 class AuthorizationError(AuthError):
     http_code = fastapi.status.HTTP_403_FORBIDDEN

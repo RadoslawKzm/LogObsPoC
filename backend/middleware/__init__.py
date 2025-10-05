@@ -1,1 +1,1 @@
-from .logic import add_http_middleware
+from .http_middleware import add_http_middleware

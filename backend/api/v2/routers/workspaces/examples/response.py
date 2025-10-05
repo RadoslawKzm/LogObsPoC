@@ -1,4 +1,4 @@
-from backend.exceptions import api_exceptions
+from backend import exceptions
 
 users_dict: dict[str, dict[str, str | dict[str, str]]] = {
     "user_2137": {
@@ -39,7 +39,7 @@ users = {
         "description": "4xx Status code returned",
         "content": {
             "application/json": {
-                "examples": api_exceptions.ApiError._api_errors
+                "examples": exceptions.api.ApiError._api_errors
             }
         },
     },

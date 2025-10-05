@@ -4,11 +4,11 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import SQLModel, create_engine, delete, select
 
+from backend import exceptions
 from backend.database.config import pg_config
 from backend.database.interface import DatabaseInterface
 from backend.database.postgres import PostgresSessionManager
 from backend.database.postgres.models import tables
-from backend.exceptions import db_exceptions
 
 COLUMN_NAME = str
 COLUMN_VALUE = str
@@ -87,7 +87,7 @@ class PostgresImplementation(DatabaseInterface):
             await self.session.commit()
             await self.session.refresh(db_record)
         except Exception:
-            exc = db_exceptions.sql.AddRecordError
+            exc = exceptions.db.sql.AddRecordError
             msg: str = f"Record: {data.model_dump()}"
             raise exc(internal_message=f"{exc} {msg}") from exc
         return db_record
@@ -140,7 +140,7 @@ class PostgresImplementation(DatabaseInterface):
             result = await self.session.execute(statement)
             await self.session.commit()
         except Exception as exc:
-            raise db_exceptions.DbError from exc
+            raise exceptions.db.DbError from exc
         return result.rowcount  # result.rowcount number of rows affected
 
     async def delete_many_records(

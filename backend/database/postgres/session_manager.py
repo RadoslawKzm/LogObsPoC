@@ -7,11 +7,11 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from backend import exceptions
 from backend.database.config import pg_config
 from backend.database.postgres.session_measurement import (
     InstrumentedAsyncSession,
 )
-from backend.exceptions import BaseCustomError, db_exceptions
 
 
 class PostgresSessionManager:
@@ -59,7 +59,10 @@ class PostgresSessionManager:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         logger.debug("Postgres session manager __aexit__")
         if any((exc_type, exc_val, exc_tb)):
-            if isinstance(exc_val, (fastapi.HTTPException, BaseCustomError)):
+            if isinstance(
+                exc_val,
+                (fastapi.HTTPException, exceptions.BaseCustomError),
+            ):
                 # Forwarding dev control flow exceptions giving HTTP4xx
                 raise exc_val
             logger.opt(exception=exc_val).error("Error in DB session occurred")
@@ -75,13 +78,13 @@ class PostgresSessionManager:
                     x=lambda: self.suppress_exc,
                 )
                 return self.suppress_exc  # gracefully suppressing if True
-            raise db_exceptions.sql.SQLError from exc_val
+            raise exceptions.db.sql.SQLError from exc_val
 
         try:
             await self.session.commit()
         except Exception as exc_info:
             await self.session.rollback()
-            raise db_exceptions.DbError(
+            raise exceptions.db.DbError(
                 internal_message="Unexpected exception in __exit__"
                 " while trying to commit session."
             ) from exc_info

@@ -2,12 +2,12 @@ import typing
 
 import fastapi
 
+from backend import auth, exceptions
 from backend.database import PG_SESSION
-from backend.exceptions import api_exceptions
 
 from . import Page, User, UsersPageResponse, UserUpdate, examples
 
-users_router = fastapi.APIRouter(prefix="/users", tags=["Users"])
+users_router = auth.APIRouter(prefix="/users", tags=["Users"])
 
 if typing.TYPE_CHECKING:
     from backend.database import PostgresImplementation
@@ -28,7 +28,7 @@ async def get_user(
         place="users",
     )
     if not result:
-        raise api_exceptions.NotFoundError(f"User: {user_id} not found")
+        raise exceptions.api.NotFoundError(f"User: {user_id} not found")
     return result
 
 
@@ -91,7 +91,7 @@ async def update_user(
         place="users",
     )
     if not existing_user:
-        raise api_exceptions.NotFoundError(f"User: {user_id} not found")
+        raise exceptions.api.NotFoundError(f"User: {user_id} not found")
     existing_user.name = user.name
     existing_user.email = user.email
     updated_user = await pg_db.update_record(
@@ -116,7 +116,7 @@ async def delete_user(
         place="users",
     )
     if result == 0:
-        raise api_exceptions.NotFoundError(f"User: {user_id} not found")
+        raise exceptions.api.NotFoundError(f"User: {user_id} not found")
     return fastapi.Response(status_code=fastapi.status.HTTP_204_NO_CONTENT)
 
 

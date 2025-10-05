@@ -9,8 +9,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
+from backend import exceptions
 from backend.api.config import settings
-from backend.exceptions import exception_handlers as exc
 from backend.loguru_logger.log_config import logger_setup
 
 from . import routers
@@ -48,7 +48,7 @@ _app.add_middleware(
     expose_headers=["X-Request-ID"],
 )
 
-_app = exc.add_exception_handlers(app=_app)
+_app = exceptions.add_handlers(app=_app)
 _app.include_router(router=routers.about)
 _app.include_router(router=routers.health)
 _app.include_router(router=routers.rbac)

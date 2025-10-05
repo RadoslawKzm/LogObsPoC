@@ -50,7 +50,7 @@ def prepare_orjson(exc: BaseCustomError, request: Request) -> ORJSONResponse:
     )
 
 
-def add_exception_handlers(app: FastAPI) -> FastAPI:
+def add_handlers(app: FastAPI) -> FastAPI:
     @app.exception_handler(HTTPException)
     async def http_exception_handler(
         request: Request,

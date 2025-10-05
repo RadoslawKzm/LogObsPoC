@@ -6,11 +6,12 @@ import pydantic
 from asgi_correlation_id import correlation_id
 from loguru import logger
 
+from backend import auth
 from backend.api.config import settings
 
 from . import examples
 
-tasks_router = fastapi.APIRouter(prefix="/tasks", tags=["Tasks"])
+tasks_router = auth.APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 class TaskCreate(pydantic.BaseModel):

@@ -1,4 +1,4 @@
-from backend.exceptions import api_exceptions
+from backend import exceptions
 
 user_2137 = {
     "user_2137": {
@@ -77,7 +77,7 @@ users_get_user = {
         "description": "4xx Status code returned",
         "content": {
             "application/json": {
-                "examples": api_exceptions.ApiError._api_errors
+                "examples": exceptions.api.ApiError._api_errors
             }
         },
     },
@@ -97,7 +97,7 @@ users_create_user = {
         "description": "4xx Status code returned",
         "content": {
             "application/json": {
-                "examples": api_exceptions.ApiError._api_errors
+                "examples": exceptions.api.ApiError._api_errors
             }
         },
     },
@@ -144,7 +144,7 @@ users_get_many_users = {
         "description": "4xx Status code returned",
         "content": {
             "application/json": {
-                "examples": api_exceptions.ApiError._api_errors
+                "examples": exceptions.api.ApiError._api_errors
             }
         },
     },
@@ -156,7 +156,7 @@ users_delete_user = {
         "description": "4xx Status code returned",
         "content": {
             "application/json": {
-                "examples": api_exceptions.ApiError._api_errors
+                "examples": exceptions.api.ApiError._api_errors
             }
         },
     },

@@ -2,8 +2,8 @@ import typing
 
 import fastapi
 
+from backend import auth, exceptions
 from backend.database import PG_SESSION
-from backend.exceptions import api_exceptions
 
 from . import (
     Page,
@@ -12,9 +12,7 @@ from . import (
     WorkspaceUpdate,
 )
 
-workspaces_router = fastapi.APIRouter(
-    prefix="/workspaces", tags=["Workspaces"]
-)
+workspaces_router = auth.APIRouter(prefix="/workspaces", tags=["Workspaces"])
 if typing.TYPE_CHECKING:
     from backend.database import PostgresImplementation
 
@@ -34,7 +32,7 @@ async def get_workspace(
         place="workspaces",
     )
     if not result:
-        raise api_exceptions.NotFoundError(
+        raise exceptions.api.NotFoundError(
             f"Workspace: {workspace_id} not found"
         )
     return result
@@ -69,7 +67,7 @@ async def get_many_workspaces(
         place="workspaces",
     )
     # if not workspaces:
-    #     raise api_exceptions.NotFoundError("No workspaces found")
+    #     raise exceptions.api.NotFoundError("No workspaces found")
 
     next_page = None
     if len(workspaces) == page_size + 1:
@@ -102,7 +100,7 @@ async def update_workspace(
         place="workspaces",
     )
     if not existing_workspace:
-        raise api_exceptions.NotFoundError(
+        raise exceptions.api.NotFoundError(
             f"Workspace: {workspace_id} not found"
         )
     existing_workspace.name = workspace.name
@@ -129,7 +127,7 @@ async def delete_workspace(
         place="workspaces",
     )
     if result == 0:
-        raise api_exceptions.NotFoundError(
+        raise exceptions.api.NotFoundError(
             f"Workspace: {workspace_id} not found"
         )
     return fastapi.Response(status_code=fastapi.status.HTTP_204_NO_CONTENT)

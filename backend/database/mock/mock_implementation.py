@@ -2,9 +2,9 @@ import typing
 
 from loguru import logger
 
+from backend import exceptions
 from backend.database.interface import DatabaseInterface
 from backend.database.mock import MockSessionManager
-from backend.exceptions import db_exceptions
 
 from .database import books
 
@@ -21,7 +21,7 @@ class MockImplementation(DatabaseInterface):
         book = books.get(record_id, None)
         if not book:
             msg: str = f"No book with id {record_id} found"
-            raise db_exceptions.RecordNotFoundError(
+            raise exceptions.db.DbError(
                 internal_message=msg,
                 external_message=msg,
             )
@@ -78,7 +78,7 @@ class MockImplementation(DatabaseInterface):
         book = books.get(record_id, None)
         if not book:
             msg: str = f"No book with id {record_id} found"
-            raise db_exceptions.RecordNotFoundError(
+            raise exceptions.db.DbError(
                 internal_message=msg,
                 external_message=msg,
             )

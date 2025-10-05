@@ -28,6 +28,7 @@
       - `1100` Authentication | HTTP 401 | [Details](#code-1100)]
       - `1101` Unauthorized | HTTP 401 | [Details](#code-1101)]
       - `1102` SessionExpired | HTTP 401 | [Details](#code-1102)]
+      - `1103` JwtDecode | HTTP 401 | [Details](#code-1103)]
       - ### 12xx Authorization Codes
       - `1200` Authorization | HTTP 403 | [Details](#code-1200)]
       - `1201` Forbidden | HTTP 403 | [Details](#code-1201)]
@@ -117,6 +118,9 @@ _Probable cause: Missing or invalid authentication token._
 #### <a id='code-1102'></a> `1102` SessionExpiredError
 External message: Session expired. Please log in again.<br>
 _Probable cause: User session or token has expired._
+#### <a id='code-1103'></a> `1103` JwtDecodeError
+External message: Invalid JWT token.<br>
+_Probable cause: Provided JWT token is invalid._
 #### Authorization Codes
 #### <a id='code-1200'></a> `1200` AuthorizationError
 General AuthorizationError Base Error.<br>

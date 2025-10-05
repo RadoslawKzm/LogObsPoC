@@ -1,10 +1,10 @@
 import random
 
-import fastapi
+from backend import auth
 
 from . import examples
 
-health_router = fastapi.APIRouter(prefix="/health", tags=["Health"])
+health_router = auth.APIRouter(prefix="/health", tags=["Health"])
 
 
 @health_router.get(

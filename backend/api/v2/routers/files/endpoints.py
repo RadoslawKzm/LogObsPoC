@@ -6,10 +6,11 @@ import fastapi
 from fastapi.responses import StreamingResponse
 from loguru import logger
 
+from backend import auth
 from backend.database import FS_SESSION
 from backend.database.file_storage import Record
 
-files_router = fastapi.APIRouter(prefix="/files", tags=["Files"])
+files_router = auth.APIRouter(prefix="/files", tags=["Files"])
 
 if typing.TYPE_CHECKING:
     from backend.database import FileStorageImplementation

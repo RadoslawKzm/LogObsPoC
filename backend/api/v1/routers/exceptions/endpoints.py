@@ -1,12 +1,7 @@
 import fastapi
 from loguru import logger
 
-from backend.exceptions import (
-    api_exceptions,
-    auth_exceptions,
-    core_exceptions,
-    db_exceptions,
-)
+from backend import exceptions
 
 exceptions_router = fastapi.APIRouter(
     prefix="/exceptions",
@@ -37,7 +32,7 @@ async def example_get_id_not_found(
     """
     database = {1, 2, 3, 4, 5, 6, 7, 8, 9}
     if example_id not in database:
-        raise api_exceptions.ResourceNotFoundError(
+        raise exceptions.api.ResourceNotFoundError(
             internal_message=f"fGet example with id. "
             f"Request for {example_id=} not found"
         )
@@ -68,7 +63,7 @@ async def example_get_api_exception(
     """This endpoint represents manually invoked api exception.
     This is meant to represent flow control in endpoints.
     """
-    raise api_exceptions.ResourceNotFoundError(
+    raise exceptions.api.ResourceNotFoundError(
         external_message=f"Requested resource: {resource_name} Not Found!"
     )
 
@@ -85,7 +80,7 @@ async def example_get_auth_exception(
     """This endpoint represents manually invoked api exception.
     This is meant to represent flow control in endpoints.
     """
-    raise auth_exceptions.AuthorizationError(
+    raise exceptions.auth.AuthorizationError(
         external_message=f"Requested role: {role} Not authenticated!"
     )
 
@@ -102,7 +97,7 @@ async def example_get_core_exception(
     """This endpoint represents manually invoked api exception.
     This is meant to represent flow control in endpoints.
     """
-    raise core_exceptions.ExternalServiceError(
+    raise exceptions.core.ExternalServiceError(
         external_message=f"Requested service: {service} Not available!"
     )
 
@@ -119,6 +114,6 @@ async def example_get_db_exception(
     """This endpoint represents manually invoked api exception.
     This is meant to represent flow control in endpoints.
     """
-    raise db_exceptions.RecordNotFoundError(
+    raise exceptions.db.RecordNotFoundError(
         external_message=f"Requested record: {record_name} Not Found!"
     )
