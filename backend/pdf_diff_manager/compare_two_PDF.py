@@ -6,7 +6,7 @@ file_two_path = ".\sample_pdf_file\SamplePDFPage2.pdf"
 
 
 
-def compare_texts_first_approach(*, first_file_path : str, second_file_path : str):
+def compare_texts_first_approach(*, first_file_path : str, second_file_path : str) -> None:
     first_text = export_text_from_pdf(file_path=first_file_path)
     second_text = export_text_from_pdf(file_path=second_file_path)
 
@@ -15,7 +15,7 @@ def compare_texts_first_approach(*, first_file_path : str, second_file_path : st
     print(''.join(result))
 
 
-def compare_texts_second_approach(*, first_file_path: str, second_file_path: str):
+def compare_texts_second_approach(*, first_file_path: str, second_file_path: str) -> None:
     first_text = export_text_from_pdf(file_path=first_file_path)
     second_text = export_text_from_pdf(file_path=second_file_path)
 
