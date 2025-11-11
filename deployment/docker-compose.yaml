@@ -262,3 +262,32 @@ networks:
 #      timeout: 10s
 #      retries: 5
 #      start_period: 5s
+
+
+
+#services:
+#  app:
+#    build: ./app
+#    ports: ["8000:8000"]
+#
+#  alloy:
+#    image: grafana/alloy:latest
+#    volumes:
+#      - ./config.alloy:/etc/alloy/config.alloy
+#      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+#    ports:
+#      - "4318:4318"  # OTLP
+#      - "9464:9464"  # Prometheus scrape
+#    depends_on:
+#      - loki
+#      - tempo
+#      - mimir
+#
+#  loki:
+#    image: grafana/loki:latest
+#  tempo:
+#    image: grafana/tempo:latest
+#  mimir:
+#    image: grafana/mimir:latest
+#  grafana:
+#    image: grafana/grafana:latest

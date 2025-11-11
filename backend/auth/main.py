@@ -44,13 +44,44 @@ async def get_user(
     request: Request,
     _=Depends(oauth2_scheme),  # noqa: B008
 ) -> User:
-    # middleware may have already decoded token
+    """
+    Retrieves the authenticated user from the request.
+
+    This function fetches the user associated with the current request.
+    If the user is not authenticated, it raises a ForbiddenError.
+
+    Args:
+        request (Request): The HTTP request object containing the user state.
+        _ (Depends): A dependency that resolves the authentication scheme.
+
+    Returns:
+        User: The authenticated user object.
+
+    Raises:
+        exceptions.auth.ForbiddenError: If there is no user inside the request.
+    """
     if request.state.user is None:
         raise exceptions.auth.ForbiddenError
     return request.state.user
 
 
 async def extract_jwt(token: str) -> User:
+    """
+    Extracts and validates a user from a given JSON Web Token (JWT).
+        1. **JWT token decoding** - Decoding and validating the JWT structure.
+        2. **Username extraction** - Extracting and validating the username.
+        3. **User validation** - Fetching and validating the user from a DB.
+
+    Args:
+        token (str): A JSON Web Token containing encoded user information.
+
+    Returns:
+        User: A validated user object corresponding to extracted information.
+
+    Raises:
+        JwtDecodeError: If a token is invalid or required `sub` field missing.
+        ForbiddenError: If a user does not exist in a database or is disabled.
+    """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.exceptions.InvalidTokenError as exc_info:
