@@ -1,4 +1,5 @@
 /venv/
+/.venv/
 /.idea/
 */logs
 /database/file_storage/data/
